@@ -2,33 +2,32 @@
 
 The website of **MNM: Medicine · Neuroscience · Mathematics**, a YIMO-affiliated student STEM initiative.
 
-It is a plain static site (HTML + CSS + JS). There is no build step and nothing to install.
+It is a static site (HTML + CSS + JS). There is no build step and nothing to install: open `index.html`, or run `python3 -m http.server 8000`.
 
 ## Pages
 
 | File | Page |
 | --- | --- |
-| `index.html` | Home: hero, pillars, what we do, teams, call to action |
-| `join.html` | Join: three steps, member vs staff, FAQ |
+| `index.html` | Home. A 3D particle brain morphs into a cross, then π, then MNM as you scroll. Also: marquee, tracks, horizontal "what we do", counters, hub teaser, teams, CTA. |
+| `track-neuroscience.html`, `track-medicine.html`, `track-mathematics.html` | Track pages: topics, a scroll-animated roadmap and resources. |
+| `hub.html` | Opportunities hub with search, category filters, sort and expandable cards. |
+| `about.html` | Mission, a quote that lights up as you scroll, and values. |
+| `join.html` | Member / Staff / Partner tabs, steps and FAQ. |
 
-## Run it locally
+## Where to edit
 
-Open `index.html` in a browser, or start a local server:
+- **Links** (Discord, staff form, partner form, email): `js/config.js`. Empty links show "coming soon".
+- **Menu and footer** for every page: `js/layout.js`.
+- **Opportunities in the hub:** `js/opportunities.js`. Copy a block to add one.
+- **Colors and fonts:** the tokens at the top of `css/styles.css`, from the MNM Brand Guide.
+- **3D particles:** `js/scene.js`.
+  - Shapes in order: 0 brain, 1 cross, 2 π, 3 MNM, 4 cloud.
+  - Each page picks its shapes with `data-seq` on `<body>`.
 
-```bash
-python3 -m http.server 8000   # then open http://localhost:8000
-```
+## Tech
 
-## Things to edit
+- Three.js 0.160 renders the particle scene.
+- GSAP 3.12 with ScrollTrigger runs the scroll animations.
+- Lenis 1.1 gives smooth scrolling.
 
-- **Discord invite and staff application links:** at the top of `main.js` in `LINKS`. While a link is empty, its buttons show "coming soon".
-- **Colors and fonts:** the tokens at the top of `styles.css` come from the MNM Brand Guide v1.0.
-  - Navy `#0A2A57`, teal `#1AA7A8`, purple `#7B4BC4`, green `#1E8C5E`, mint `#30C39C`, light `#F4F6F8`.
-  - Space Grotesk for headings, Inter for body text.
-- **Logo:**
-  - `assets/mark-dark.webp`: the symbol for dark backgrounds.
-  - `assets/mark.png`: the favicon.
-
-## Deploy
-
-Any static host works: GitHub Pages, Vercel or Netlify. The repository root is the site root.
+The libraries are vendored in `vendor/`, so the site works on any static host: GitHub Pages, Vercel or Netlify. If the visitor prefers reduced motion, the animations turn off. If WebGL is unavailable, the logo is shown instead.

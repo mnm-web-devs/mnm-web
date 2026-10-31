@@ -4,106 +4,111 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Join MNM — Medicine · Neuroscience · Mathematics</title>
-  <meta name="description" content="Join MNM, a YIMO-affiliated student STEM initiative for medicine, neuroscience and mathematics. Three steps, about two minutes." />
-  <meta name="theme-color" content="#071a36" />
+  <meta name="description" content="Join MNM as a member, apply for staff or partner with us. Free, student-run, open to everyone." />
+  <meta name="theme-color" content="#050f22" />
+  <meta property="og:title" content="Join MNM — Medicine · Neuroscience · Mathematics" />
+  <meta property="og:description" content="Join MNM as a member, apply for staff or partner with us. Free, student-run, open to everyone." />
+  <meta property="og:image" content="assets/mark-dark.webp" />
   <link rel="icon" type="image/png" href="assets/mark.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
-  <canvas id="net" aria-hidden="true"></canvas>
-
-  <header class="nav">
-    <a class="brand" href="index.html" aria-label="MNM home">
-      <img src="assets/mark-dark.webp" alt="" width="36" height="36" />
-      <span>MNM</span>
-    </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="index.html#pillars">Pillars</a>
-      <a href="index.html#what">What we do</a>
-      <a href="index.html#teams">Teams</a>
-      <a class="btn btn-sm" href="#steps" aria-current="page">Join MNM</a>
-    </nav>
-  </header>
+<body data-page="join" data-seq="3,4" data-scale="0.6">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <img class="gl-fallback" src="assets/mark-dark.webp" alt="" aria-hidden="true" />
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><i></i></div>
+  <div id="site-header"></div>
 
   <main>
-    <section class="wrap join-hero">
-      <p class="eyebrow">Join the community</p>
-      <h1>Become part of <span class="grad">MNM</span></h1>
-      <p class="lead">Whether you love biology, the brain or numbers — or all three — there's a place for you. No experience needed, just curiosity.</p>
-      <div class="cta-row center">
-        <a class="btn" data-link="discord" href="#">Join our Discord <span aria-hidden="true">→</span></a>
+    <section class="wrap page-hero compact">
+      <p class="crumbs fade-up"><a href="index.html">Home</a> / <span>Join</span></p>
+      <p class="eyebrow fade-up">Join the community</p>
+      <h1 class="split">Become part of <span class="grad">MNM</span></h1>
+      <p class="lead fade-up">Whether you love biology, the brain or numbers, or all three, there's a place for you. No experience needed, just curiosity. It's free.</p>
+
+      <div class="tabs fade-up" role="tablist" aria-label="Ways to join">
+        <span class="tab-pill" aria-hidden="true"></span>
+        <button class="tab" role="tab" id="t-member" aria-controls="member" aria-selected="true">Member</button>
+        <button class="tab" role="tab" id="t-staff" aria-controls="staff" aria-selected="false" tabindex="-1">Staff</button>
+        <button class="tab" role="tab" id="t-partner" aria-controls="partner" aria-selected="false" tabindex="-1">Partner</button>
       </div>
     </section>
 
-    <section class="wrap section" id="steps">
-      <h2>Three steps</h2>
-      <ol class="steps">
-        <li class="step reveal">
-          <span class="num">1</span>
-          <h3>Join the Discord</h3>
-          <p>Everything at MNM happens there: announcements, meetings, programs and chats.</p>
-          <a class="text-link" data-link="discord" href="#">Open the invite →</a>
-        </li>
-        <li class="step reveal">
-          <span class="num">2</span>
-          <h3>Say hi</h3>
-          <p>Introduce yourself in <code>#join-mnm</code> — who you are, what you're into and what you'd like to do.</p>
-        </li>
-        <li class="step reveal">
-          <span class="num">3</span>
-          <h3>Pick your path</h3>
-          <p>Join programs as a member, or apply for a staff role on one of our teams.</p>
-          <a class="text-link" data-link="apply" href="#">Staff application →</a>
-        </li>
-      </ol>
-    </section>
+    <section class="wrap">
+      <div class="tab-panel" id="member" role="tabpanel" aria-labelledby="t-member">
+        <div class="join-grid">
+          <ol class="steps">
+            <li class="step"><span class="num">1</span><div><h3>Join the Discord</h3><p>Everything at MNM happens there: announcements, meetings, programs and chats.</p><a class="text-link" data-link="discord" href="#">Open the invite →</a></div></li>
+            <li class="step"><span class="num">2</span><div><h3>Say hi</h3><p>Introduce yourself in <code>#join-mnm</code>: who you are, what you're into and what you'd like to do.</p></div></li>
+            <li class="step"><span class="num">3</span><div><h3>Pick a track</h3><p>Neuroscience, medicine or mathematics. Join its study group and start the roadmap.</p><a class="text-link" href="track-neuroscience.html">See the tracks →</a></div></li>
+          </ol>
+          <aside class="side-card">
+            <p class="eyebrow">As a member</p>
+            <h3>Learn &amp; take part</h3>
+            <ul class="checks"><li>Sessions, study groups and programs</li><li>Olympiad preparation with others</li><li>Research and real projects</li><li>Friends from other schools and countries</li></ul>
+            <a class="btn magnetic" data-link="discord" href="#"><span>Join our Discord <b aria-hidden="true">→</b></span></a>
+          </aside>
+        </div>
+      </div>
 
-    <section class="wrap section">
-      <h2>Two ways to be involved</h2>
-      <div class="paths">
-        <article class="path reveal">
-          <p class="eyebrow">Member</p>
-          <h3>Learn &amp; take part</h3>
-          <ul class="checks">
-            <li>Join sessions, study groups and programs</li>
-            <li>Prepare for olympiads with others</li>
-            <li>Get into research and projects</li>
-            <li>Meet students from other schools</li>
-          </ul>
-        </article>
-        <article class="path staff reveal">
-          <p class="eyebrow">Staff</p>
-          <h3>Build &amp; lead</h3>
-          <ul class="checks">
-            <li>Work on a team: programs, tech, media, design, partnerships</li>
-            <li>Run events and initiatives</li>
-            <li>Get real leadership experience for your portfolio</li>
-            <li>Shape where MNM goes next</li>
-          </ul>
-        </article>
+      <div class="tab-panel" id="staff" role="tabpanel" aria-labelledby="t-staff" hidden>
+        <div class="join-grid">
+          <ol class="steps">
+            <li class="step"><span class="num">1</span><div><h3>Choose a team</h3><p>Programs &amp; Curriculum, Web &amp; Tech, Media &amp; Content, Design &amp; Brand, Partnerships or Volunteering.</p></div></li>
+            <li class="step"><span class="num">2</span><div><h3>Apply</h3><p>Fill in the staff application. Tell us what you can do and how much time you have.</p><a class="text-link" data-link="apply" href="#">Staff application →</a></div></li>
+            <li class="step"><span class="num">3</span><div><h3>Meet the leads</h3><p>A short chat with the team lead, then you're in and get your first task.</p></div></li>
+          </ol>
+          <aside class="side-card">
+            <p class="eyebrow">As staff</p>
+            <h3>Build &amp; lead</h3>
+            <ul class="checks"><li>A real role on a team</li><li>Run events and initiatives</li><li>Leadership experience for your portfolio</li><li>Shape where MNM goes next</li></ul>
+            <a class="btn magnetic" data-link="apply" href="#"><span>Apply for staff <b aria-hidden="true">→</b></span></a>
+          </aside>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="partner" role="tabpanel" aria-labelledby="t-partner" hidden>
+        <div class="join-grid">
+          <ol class="steps">
+            <li class="step"><span class="num">1</span><div><h3>Schools &amp; clubs</h3><p>Host an MNM session, run a joint event or invite your students into our programs.</p></div></li>
+            <li class="step"><span class="num">2</span><div><h3>Universities &amp; researchers</h3><p>Give a talk, mentor a research group or help students find their first project.</p></div></li>
+            <li class="step"><span class="num">3</span><div><h3>Organisations</h3><p>Support competitions, prizes or resources so we can reach more students.</p></div></li>
+          </ol>
+          <aside class="side-card">
+            <p class="eyebrow">Partner with us</p>
+            <h3>Let's work together</h3>
+            <ul class="checks"><li>Reach motivated STEM students</li><li>Co-host events and programs</li><li>Support student-led science</li></ul>
+            <a class="btn magnetic" data-link="partner" href="#"><span>Get in touch <b aria-hidden="true">→</b></span></a>
+          </aside>
+        </div>
       </div>
     </section>
 
     <section class="wrap section">
-      <h2>Questions</h2>
+      <p class="eyebrow">FAQ</p>
+      <h2 class="split">Questions</h2>
       <div class="faq">
-        <details class="reveal"><summary>Who can join?</summary><p>Students who are curious about medicine, neuroscience or mathematics. You don't need to be an expert in any of them.</p></details>
-        <details class="reveal"><summary>Does it cost anything?</summary><p>No. MNM is a student-run initiative and joining is free.</p></details>
-        <details class="reveal"><summary>When are the meetings?</summary><p>We meet online. Times are announced in the Discord so members in different time zones can plan ahead.</p></details>
-        <details class="reveal"><summary>How much time do I need?</summary><p>As much as you want to give. Members join what they like; staff agree on their workload with their team lead.</p></details>
+        <details><summary>Who can join?</summary><p>Students who are curious about medicine, neuroscience or mathematics. You don't need to be an expert in any of them.</p></details>
+        <details><summary>Does it cost anything?</summary><p>No. MNM is a student-run initiative and joining is free.</p></details>
+        <details><summary>When are the meetings?</summary><p>We meet online. Times are announced in the Discord so members in different time zones can plan ahead.</p></details>
+        <details><summary>How much time do I need?</summary><p>As much as you want to give. Members join what they like; staff agree on their workload with their team lead.</p></details>
+        <details><summary>Can I be in more than one track?</summary><p>Yes. MNM is about how the three sciences connect, so many members follow more than one.</p></details>
       </div>
     </section>
+
   </main>
 
-  <footer class="footer wrap">
-    <div class="brand"><img src="assets/mark-dark.webp" alt="" width="28" height="28" /><span>MNM</span></div>
-    <p>Medicine · Neuroscience · Mathematics — a YIMO-affiliated STEM initiative.</p>
-    <p class="small">© <span id="year">2026</span> MNM. Made by students.</p>
-  </footer>
+  <div id="site-footer"></div>
 
-  <script src="main.js"></script>
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/app.js"></script>
+  <script type="module" src="js/scene.js"></script>
 </body>
 </html>
