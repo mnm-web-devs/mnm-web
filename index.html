@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MNM — Medicine · Neuroscience · Mathematics</title>
+  <meta name="description" content="MNM is a YIMO-affiliated student STEM initiative where medicine, neuroscience and mathematics meet. Learn, compete, research, create, collaborate, lead and make an impact." />
+  <meta name="theme-color" content="#071a36" />
+  <meta property="og:title" content="MNM — Medicine · Neuroscience · Mathematics" />
+  <meta property="og:description" content="A YIMO-affiliated student STEM initiative. Learn · Compete · Research · Create · Collaborate · Lead · Impact." />
+  <meta property="og:image" content="assets/mark-dark.webp" />
+  <link rel="icon" type="image/png" href="assets/mark.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="net" aria-hidden="true"></canvas>
+
+  <header class="nav" id="top">
+    <a class="brand" href="index.html" aria-label="MNM home">
+      <img src="assets/mark-dark.webp" alt="" width="36" height="36" />
+      <span>MNM</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#pillars">Pillars</a>
+      <a href="#what">What we do</a>
+      <a href="#teams">Teams</a>
+      <a class="btn btn-sm" href="join.html">Join MNM</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">YIMO-affiliated STEM initiative</p>
+        <h1>Where <span class="c-med">medicine</span>, the <span class="c-neuro">brain</span> and <span class="c-math">math</span> meet.</h1>
+        <p class="lead">MNM is a student community for curious minds who want to go beyond the textbook — learning together, competing, doing real research and building projects across three sciences.</p>
+        <div class="cta-row">
+          <a class="btn" href="join.html">Join MNM <span aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost" href="#pillars">Explore</a>
+        </div>
+        <ul class="verbs" aria-label="Our values">
+          <li>Learn</li><li>Compete</li><li>Research</li><li>Create</li><li>Collaborate</li><li>Lead</li><li>Impact</li>
+        </ul>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit o1"></div>
+        <div class="orbit o2"></div>
+        <img class="mark" src="assets/mark-dark.webp" alt="" width="520" height="520" />
+        <span class="mnm-word">MNM</span>
+      </div>
+    </section>
+
+    <!-- PILLARS -->
+    <section class="wrap section" id="pillars">
+      <p class="eyebrow">Three sciences, one community</p>
+      <h2>Our pillars</h2>
+      <div class="pillars">
+        <article class="pillar med reveal">
+          <div class="p-icon">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M18 6h12v12h12v12H30v12H18V30H6V18h12z"/></svg>
+          </div>
+          <h3>Medicine</h3>
+          <p>How the human body works, how diseases are fought, and how science turns into care for real people.</p>
+        </article>
+        <article class="pillar neuro reveal">
+          <div class="p-icon">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="14" r="3.5"/><circle cx="34" cy="10" r="3.5"/><circle cx="24" cy="26" r="3.5"/><circle cx="10" cy="34" r="3.5"/><circle cx="38" cy="32" r="3.5"/><path d="M15 15l6 8M31 12l-5 11M21 28l-8 4M27 27l8 4M15.5 14l15-3.5"/></g></svg>
+          </div>
+          <h3>Neuroscience</h3>
+          <p>The brain, the mind and behaviour — from single neurons to memory, learning and AI inspired by biology.</p>
+        </article>
+        <article class="pillar math reveal">
+          <div class="p-icon">
+            <span class="glyph" aria-hidden="true">π</span>
+          </div>
+          <h3>Mathematics</h3>
+          <p>The language behind both — statistics, modelling and problem solving that make the other sciences precise.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- WHAT WE DO -->
+    <section class="wrap section" id="what">
+      <p class="eyebrow">What we do</p>
+      <h2>Seven ways to grow with MNM</h2>
+      <ol class="do-grid">
+        <li class="reveal"><b>Learn</b><span>Sessions, study groups and curricula built by students, for students.</span></li>
+        <li class="reveal"><b>Compete</b><span>Prepare for olympiads and competitions together.</span></li>
+        <li class="reveal"><b>Research</b><span>Read papers, ask questions and work on real research projects.</span></li>
+        <li class="reveal"><b>Create</b><span>Build websites, tools, content and designs that share science.</span></li>
+        <li class="reveal"><b>Collaborate</b><span>Work with members from different schools and countries.</span></li>
+        <li class="reveal"><b>Lead</b><span>Run a team, a program or an event and learn by leading it.</span></li>
+        <li class="reveal wide"><b>Impact</b><span>Use what we learn to help people outside our community.</span></li>
+      </ol>
+    </section>
+
+    <!-- TEAMS -->
+    <section class="wrap section" id="teams">
+      <p class="eyebrow">Find your place</p>
+      <h2>Teams you can join</h2>
+      <div class="teams">
+        <div class="team reveal"><span class="dot" style="--c:var(--teal)"></span><h3>Programs &amp; Curriculum</h3><p>Design courses, sessions and learning paths.</p></div>
+        <div class="team reveal"><span class="dot" style="--c:var(--purple)"></span><h3>Web &amp; Tech</h3><p>Build this website and the tools MNM runs on.</p></div>
+        <div class="team reveal"><span class="dot" style="--c:var(--green)"></span><h3>Media &amp; Content</h3><p>Posts, videos and articles that explain science.</p></div>
+        <div class="team reveal"><span class="dot" style="--c:var(--mint)"></span><h3>Design &amp; Brand</h3><p>Logos, templates and the look of everything MNM.</p></div>
+        <div class="team reveal"><span class="dot" style="--c:var(--teal)"></span><h3>Partnerships</h3><p>Connect MNM with schools, clubs and organisations.</p></div>
+        <div class="team reveal"><span class="dot" style="--c:var(--purple)"></span><h3>Volunteering</h3><p>Help at events and with community projects.</p></div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="wrap section">
+      <div class="cta-band reveal">
+        <div>
+          <h2>Ready to be part of it?</h2>
+          <p>It takes two minutes to join. Bring your curiosity — we'll figure out the rest together.</p>
+        </div>
+        <a class="btn btn-light" href="join.html">How to join <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer wrap">
+    <div class="brand"><img src="assets/mark-dark.webp" alt="" width="28" height="28" /><span>MNM</span></div>
+    <p>Medicine · Neuroscience · Mathematics — a YIMO-affiliated STEM initiative.</p>
+    <p class="small">© <span id="year">2026</span> MNM. Made by students.</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

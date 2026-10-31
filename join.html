@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Join MNM — Medicine · Neuroscience · Mathematics</title>
+  <meta name="description" content="Join MNM, a YIMO-affiliated student STEM initiative for medicine, neuroscience and mathematics. Three steps, about two minutes." />
+  <meta name="theme-color" content="#071a36" />
+  <link rel="icon" type="image/png" href="assets/mark.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="net" aria-hidden="true"></canvas>
+
+  <header class="nav">
+    <a class="brand" href="index.html" aria-label="MNM home">
+      <img src="assets/mark-dark.webp" alt="" width="36" height="36" />
+      <span>MNM</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="index.html#pillars">Pillars</a>
+      <a href="index.html#what">What we do</a>
+      <a href="index.html#teams">Teams</a>
+      <a class="btn btn-sm" href="#steps" aria-current="page">Join MNM</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap join-hero">
+      <p class="eyebrow">Join the community</p>
+      <h1>Become part of <span class="grad">MNM</span></h1>
+      <p class="lead">Whether you love biology, the brain or numbers — or all three — there's a place for you. No experience needed, just curiosity.</p>
+      <div class="cta-row center">
+        <a class="btn" data-link="discord" href="#">Join our Discord <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <section class="wrap section" id="steps">
+      <h2>Three steps</h2>
+      <ol class="steps">
+        <li class="step reveal">
+          <span class="num">1</span>
+          <h3>Join the Discord</h3>
+          <p>Everything at MNM happens there: announcements, meetings, programs and chats.</p>
+          <a class="text-link" data-link="discord" href="#">Open the invite →</a>
+        </li>
+        <li class="step reveal">
+          <span class="num">2</span>
+          <h3>Say hi</h3>
+          <p>Introduce yourself in <code>#join-mnm</code> — who you are, what you're into and what you'd like to do.</p>
+        </li>
+        <li class="step reveal">
+          <span class="num">3</span>
+          <h3>Pick your path</h3>
+          <p>Join programs as a member, or apply for a staff role on one of our teams.</p>
+          <a class="text-link" data-link="apply" href="#">Staff application →</a>
+        </li>
+      </ol>
+    </section>
+
+    <section class="wrap section">
+      <h2>Two ways to be involved</h2>
+      <div class="paths">
+        <article class="path reveal">
+          <p class="eyebrow">Member</p>
+          <h3>Learn &amp; take part</h3>
+          <ul class="checks">
+            <li>Join sessions, study groups and programs</li>
+            <li>Prepare for olympiads with others</li>
+            <li>Get into research and projects</li>
+            <li>Meet students from other schools</li>
+          </ul>
+        </article>
+        <article class="path staff reveal">
+          <p class="eyebrow">Staff</p>
+          <h3>Build &amp; lead</h3>
+          <ul class="checks">
+            <li>Work on a team: programs, tech, media, design, partnerships</li>
+            <li>Run events and initiatives</li>
+            <li>Get real leadership experience for your portfolio</li>
+            <li>Shape where MNM goes next</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap section">
+      <h2>Questions</h2>
+      <div class="faq">
+        <details class="reveal"><summary>Who can join?</summary><p>Students who are curious about medicine, neuroscience or mathematics. You don't need to be an expert in any of them.</p></details>
+        <details class="reveal"><summary>Does it cost anything?</summary><p>No. MNM is a student-run initiative and joining is free.</p></details>
+        <details class="reveal"><summary>When are the meetings?</summary><p>We meet online. Times are announced in the Discord so members in different time zones can plan ahead.</p></details>
+        <details class="reveal"><summary>How much time do I need?</summary><p>As much as you want to give. Members join what they like; staff agree on their workload with their team lead.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer wrap">
+    <div class="brand"><img src="assets/mark-dark.webp" alt="" width="28" height="28" /><span>MNM</span></div>
+    <p>Medicine · Neuroscience · Mathematics — a YIMO-affiliated STEM initiative.</p>
+    <p class="small">© <span id="year">2026</span> MNM. Made by students.</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
