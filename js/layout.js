@@ -13,8 +13,7 @@
     header.outerHTML = `
   <header class="nav">
     <a class="brand" href="index.html" aria-label="MNM home">
-      <img src="assets/mark-dark.webp" alt="" width="34" height="34" />
-      <span>MNM</span>
+      <img src="assets/logo-dark.webp" alt="MNM" width="47" height="46" />
     </a>
     <nav class="nav-links" aria-label="Main">
       <a href="index.html"${is("index.html")}>Home</a>
@@ -45,7 +44,7 @@
   <footer class="footer">
     <div class="wrap footer-top">
       <div>
-        <div class="brand"><img src="assets/mark-dark.webp" alt="" width="28" height="28" /><span>MNM</span></div>
+        <img class="footer-logo" src="assets/logo-dark.webp" alt="MNM — Medicine, Neuroscience, Mathematics" width="130" height="127" />
         <p>Medicine · Neuroscience · Mathematics.<br />A YIMO-affiliated STEM initiative.</p>
       </div>
       <nav class="footer-cols" aria-label="Footer">

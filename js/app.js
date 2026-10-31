@@ -14,7 +14,7 @@
   document.querySelectorAll("[data-link]").forEach((el) => {
     const url = LINKS[el.dataset.link];
     if (url) { el.href = url; el.target = "_blank"; el.rel = "noopener"; return; }
-    if (el.closest(".footer")) { el.remove(); return; }
+    if (el.closest(".footer")) { const col = el.parentElement; el.remove(); if (col && col.querySelectorAll("a").length === 0) col.remove(); return; }
     el.removeAttribute("href");
     el.classList.add("is-soon");
     el.setAttribute("aria-disabled", "true");

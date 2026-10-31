@@ -415,3 +415,6 @@ code { font-family: ui-monospace, monospace; background: rgba(255,255,255,.08); 
 .grad .wi { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .page-hero .tabs { align-self: flex-start; }
 .page-hero.compact { min-height: auto; padding-bottom: 10px; }
+
+.nav .brand img { width: 46px; height: auto; }
+.footer-logo { width: 130px; height: auto; margin-bottom: 18px; }
