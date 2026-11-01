@@ -4,4 +4,4 @@ Disallow: /login.html
 Disallow: /dashboard.html
 Disallow: /admin.html
 
-Sitemap: https://mnm-liard.vercel.app/sitemap.xml
+Sitemap: https://mnmstem.study/sitemap.xml

@@ -60,7 +60,7 @@ Fixes from `Audit.md`. Things to know when editing:
 - **Fonts are self-hosted** (`assets/fonts/` + `css/fonts.css`). Don't add Google Fonts links back (privacy / GDPR).
 - **Security headers + CSP** live in `vercel.json`. If you add an external service (Clerk, analytics, a form provider), add its domain to the matching CSP directive (`script-src`, `connect-src`, `frame-src`, `img-src`), or it will be blocked.
 - **Vendor files are pinned** with SRI hashes. Versions and hashes are in `vendor/versions.txt`; if you replace a vendor file, update the `integrity` attribute in every HTML file.
-- **Domain:** canonical/OG URLs, `robots.txt` and `sitemap.xml` use `https://mnm-liard.vercel.app`. When mnmstem.study is live, replace that string everywhere (one find-and-replace).
+- **Domain:** the site lives at https://mnmstem.study (canonical/OG URLs, `robots.txt` and `sitemap.xml` use it).
 - **Opportunities:** entries in `js/opportunities.js` need `name`, `cat`, `url`, `desc`; incomplete ones are skipped with a console warning, and links must be `http(s)`.
 - **Marquee:** list each word once; the loop copy is created by JS.
 - New pages: `privacy.html`, `404.html`. New files: `robots.txt`, `sitemap.xml`, `favicon.ico`, `assets/og.png` (link previews), `assets/apple-touch-icon.png`.
