@@ -31,3 +31,24 @@ It is a static site (HTML + CSS + JS). There is no build step and nothing to ins
 - Lenis 1.1 gives smooth scrolling.
 
 The libraries are vendored in `vendor/`, so the site works on any static host: GitHub Pages, Vercel or Netlify. If the visitor prefers reduced motion, the animations turn off. If WebGL is unavailable, the logo is shown instead.
+
+## Accounts & dashboards (frontend ready, backend to wire)
+
+New pages:
+
+- `login.html`: sign in / create account (email + password, Google, Discord, forgot password)
+- `dashboard.html`: student dashboard (overview, tracks, workshops with registration, monthly challenge submission, leaderboard, profile)
+- `admin.html`: admin dashboard (stats + chart, students table with search/filter/sort/CSV export, create/delete workshops, review submissions, partner/sponsor inquiries)
+
+Right now everything runs on **mock data** in `js/api.js`, so the pages work without a backend
+(demo login: any email + 8+ character password; an email containing "admin" opens the admin dashboard).
+
+To connect the backend, only touch `js/api.js`:
+
+1. Replace each `MNM_API.student.*` and `MNM_API.admin.*` function body with a `fetch()` to the API.
+   Keep the function names, arguments and return shapes (the mock tables at the top show the exact shapes).
+2. Replace `MNM_API.auth.*` with Clerk (each function has a comment with the matching Clerk call).
+   `auth.me()` must return `{ id, name, email, role }`, with `role: "admin"` for leads (e.g. from Clerk `publicMetadata.role`).
+3. The admin redirect in `js/shell.js` is only a UI guard. The API must also check the role on every admin request.
+
+Files: `js/api.js` (data), `js/auth.js` (login page), `js/shell.js` (shared sidebar/guard/toasts), `js/dashboard.js`, `js/admin.js`, `css/app.css`.

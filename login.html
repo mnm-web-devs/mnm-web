@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in — MNM</title>
+  <meta name="description" content="Sign in to your MNM account to track your progress, register for workshops and submit challenges." />
+  <meta name="theme-color" content="#050f22" />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body data-page="login" data-seq="0,3" data-scale="0.7" class="auth-page">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <img class="gl-fallback" src="assets/logo-full-dark.webp" alt="" aria-hidden="true" />
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><i></i></div>
+  <div id="site-header"></div>
+
+  <main class="auth wrap">
+    <section class="auth-pitch">
+      <p class="eyebrow">Your MNM account</p>
+      <h1 class="split">Learn, compete and <span class="grad">track your progress</span></h1>
+      <ul class="checks">
+        <li>Follow your Neuroscience, Medicine and Mathematics roadmaps</li>
+        <li>Register for live workshops in one click</li>
+        <li>Submit monthly challenges and climb the leaderboard</li>
+      </ul>
+    </section>
+
+    <section class="auth-card" aria-label="Sign in or create an account">
+      <div class="tabs auth-tabs" role="tablist" aria-label="Account">
+        <span class="tab-pill" aria-hidden="true"></span>
+        <button class="tab" role="tab" id="t-signin" aria-controls="signin" aria-selected="true">Sign in</button>
+        <button class="tab" role="tab" id="t-signup" aria-controls="signup" aria-selected="false" tabindex="-1">Create account</button>
+      </div>
+
+      <!-- Clerk: you can swap either panel for <div id="clerk-sign-in"></div> + clerk.mountSignIn(), or keep this UI and call Clerk from js/auth.js -->
+      <div class="tab-panel" id="signin" role="tabpanel" aria-labelledby="t-signin">
+        <div class="oauth">
+          <button class="oauth-btn" type="button" data-oauth="google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M12 10.2v3.9h5.4c-.2 1.3-1.6 3.8-5.4 3.8-3.3 0-5.9-2.7-5.9-6s2.6-6 5.9-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.4 12 2.4 6.7 2.4 2.4 6.7 2.4 12s4.3 9.6 9.6 9.6c5.5 0 9.2-3.9 9.2-9.4 0-.6-.1-1.1-.2-1.6H12z"/></svg>Continue with Google</button>
+          <button class="oauth-btn" type="button" data-oauth="discord"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#8B9BFF" d="M20 5.2A17 17 0 0 0 15.8 4l-.5 1a15.6 15.6 0 0 0-6.6 0l-.5-1A17 17 0 0 0 4 5.2 18 18 0 0 0 .9 17.4 17 17 0 0 0 6.1 20l1.1-1.8c-.6-.2-1.2-.5-1.8-.9l.4-.3a12 12 0 0 0 12.4 0l.4.3c-.6.4-1.2.7-1.8.9l1.1 1.8a17 17 0 0 0 5.2-2.6A18 18 0 0 0 20 5.2zM8.3 14.9c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1zm7.4 0c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1z"/></svg>Continue with Discord</button>
+        </div>
+        <p class="or"><span>or with email</span></p>
+        <form id="signin-form" class="form" novalidate>
+          <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required placeholder="you@school.org" /></label>
+          <label class="field"><span>Password <button type="button" class="link-btn" id="forgot">Forgot?</button></span>
+            <span class="pw"><input type="password" name="password" autocomplete="current-password" required minlength="8" placeholder="At least 8 characters" /><button type="button" class="pw-toggle" aria-label="Show password">Show</button></span></label>
+          <p class="form-msg" role="alert" aria-live="polite"></p>
+          <button class="btn btn-block" type="submit"><span>Sign in <b aria-hidden="true">→</b></span></button>
+        </form>
+        <p class="demo-note">Demo mode: any email + 8-character password works. Emails with "admin" open the admin dashboard.</p>
+      </div>
+
+      <div class="tab-panel" id="signup" role="tabpanel" aria-labelledby="t-signup" hidden>
+        <form id="signup-form" class="form" novalidate>
+          <label class="field"><span>Full name</span><input type="text" name="name" autocomplete="name" required placeholder="Your name" /></label>
+          <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required placeholder="you@school.org" /></label>
+          <label class="field"><span>Password</span>
+            <span class="pw"><input type="password" name="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters" /><button type="button" class="pw-toggle" aria-label="Show password">Show</button></span></label>
+          <fieldset class="field">
+            <legend>Main interest</legend>
+            <div class="picks">
+              <label class="pick" style="--c:var(--purple-hi)"><input type="radio" name="track" value="neuro" checked /><span>◉ Neuroscience</span></label>
+              <label class="pick" style="--c:var(--teal-hi)"><input type="radio" name="track" value="med" /><span>✚ Medicine</span></label>
+              <label class="pick" style="--c:var(--mint)"><input type="radio" name="track" value="math" /><span>π Mathematics</span></label>
+            </div>
+          </fieldset>
+          <label class="check"><input type="checkbox" name="consent" required /><span>I agree to the community rules. If I'm under 16, a parent or guardian knows I'm signing up.</span></label>
+          <p class="form-msg" role="alert" aria-live="polite"></p>
+          <button class="btn btn-block" type="submit"><span>Create account <b aria-hidden="true">→</b></span></button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script type="module" src="js/scene.js"></script>
+</body>
+</html>
