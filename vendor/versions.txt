@@ -1,0 +1,7 @@
+# Vendored libraries (exact versions + SRI hashes).
+# If you replace a file, update its line here AND the integrity="..." attribute in every HTML file.
+
+gsap.min.js              GSAP 3.12.5            sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt
+ScrollTrigger.min.js     ScrollTrigger 3.12.5   sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d
+lenis.min.js             Lenis 1.1.13           sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed
+three.module.min.js      three.js r160          sha384-8/hf5tabFfIo0BPku31TKUvGIKpWGYaMwNtlSNqNyZzXgZCMd4lnOGWbJElML9dv

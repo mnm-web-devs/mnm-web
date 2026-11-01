@@ -3,20 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sign in — MNM</title>
+  <title>Sign in | MNM</title>
   <meta name="description" content="Sign in to your MNM account to track your progress, register for workshops and submit challenges." />
   <meta name="theme-color" content="#050f22" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/fonts.css" />
   <meta name="robots" content="noindex" />
-  <link rel="icon" type="image/png" href="assets/favicon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/app.css" />
 </head>
 <body data-page="login" data-seq="0,3" data-scale="0.7" class="auth-page">
   <canvas id="gl" aria-hidden="true"></canvas>
-  <img class="gl-fallback" src="assets/logo-full-dark.webp" alt="" aria-hidden="true" />
+  <img class="gl-fallback" src="assets/logo-full-dark.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
   <div class="grain" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"><i></i></div>
   <div id="site-header"></div>
@@ -71,6 +73,7 @@
             </div>
           </fieldset>
           <label class="check"><input type="checkbox" name="consent" required /><span>I agree to the community rules. If I'm under 16, a parent or guardian knows I'm signing up.</span></label>
+          <p class="privacy-note">We only use your name and email to run your MNM account and send you event info. We never sell or share it. <a href="privacy.html">Privacy</a></p>
           <p class="form-msg" role="alert" aria-live="polite"></p>
           <button class="btn btn-block" type="submit"><span>Create account <b aria-hidden="true">→</b></span></button>
         </form>
@@ -78,9 +81,9 @@
     </section>
   </main>
 
-  <script src="vendor/gsap.min.js"></script>
-  <script src="vendor/ScrollTrigger.min.js"></script>
-  <script src="vendor/lenis.min.js"></script>
+  <script src="vendor/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"></script>
+  <script src="vendor/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d"></script>
+  <script src="vendor/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed"></script>
   <script src="js/config.js"></script>
   <script src="js/layout.js"></script>
   <script src="js/app.js"></script>

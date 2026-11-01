@@ -5,7 +5,9 @@
   const page = document.body.dataset.page;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const fine = matchMedia("(pointer: fine)").matches;
-  const isMobile = () => innerWidth <= 820;
+  let mobileNow = innerWidth <= 820;
+  addEventListener("resize", () => (mobileNow = innerWidth <= 820), { passive: true });
+  const isMobile = () => mobileNow;
   const hasGsap = !!window.gsap && !!window.ScrollTrigger;
   root.classList.add("js");
 
@@ -43,6 +45,7 @@
       t.addEventListener("click", () => select(t));
       t.addEventListener("keydown", (e) => {
         if (e.key === "ArrowRight" || e.key === "ArrowLeft") select(tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length], true);
+        else if (e.key === "Home" || e.key === "End") { e.preventDefault(); select(e.key === "Home" ? tabs[0] : tabs[tabs.length - 1], true); }
       });
     });
     const fromHash = tabs.find((t) => "#" + t.getAttribute("aria-controls") === location.hash);
@@ -59,7 +62,14 @@
   const offsetFor = (base) => (isMobile() ? 0 : base);
   want.x = offsetFor(BASE);
   addEventListener("mnm3d:ready", push);
-  push();
+  push(); // also covers the case where the scene was ready before this script ran
+
+  /* ---------- marquee: build the second (looping) half from the first, so editors only keep one list ---------- */
+  document.querySelectorAll(".mq-track").forEach((t) => {
+    if (t.dataset.cloned) return;
+    [...t.children].forEach((c) => { const k = c.cloneNode(true); k.setAttribute("aria-hidden", "true"); t.appendChild(k); });
+    t.dataset.cloned = "1";
+  });
 
   /* ---------- split headings into words ---------- */
   function split(el) {
@@ -109,8 +119,9 @@
 
   /* ---------- intro curtain + hero entrance ---------- */
   const heroWords = document.querySelectorAll(".hero .wi, .page-hero .wi");
-  gsap.set(heroWords, { yPercent: 110 });
-  gsap.set(".hero .fade-up, .page-hero .fade-up", { y: 24, opacity: 0 });
+  const heroFades = document.querySelectorAll(".hero .fade-up, .page-hero .fade-up");
+  if (heroWords.length) gsap.set(heroWords, { yPercent: 110 });
+  if (heroFades.length) gsap.set(heroFades, { y: 24, opacity: 0 });
   const intro = document.querySelector(".intro");
   const tl = gsap.timeline({ paused: true });
   if (intro) {
@@ -120,9 +131,9 @@
       .to(intro, { yPercent: -100, duration: 0.9, ease: "expo.inOut" }, "-=0.25")
       .set(intro, { display: "none" });
   }
-  tl.to(heroWords, { yPercent: 0, duration: 1, stagger: 0.045, ease: "power4.out" }, intro ? "-=0.55" : 0)
-    .to(".hero .fade-up, .page-hero .fade-up", { y: 0, opacity: 1, duration: 0.9, stagger: 0.1, ease: "power3.out" }, "-=0.7")
-    .add(() => window.MNM3D && MNM3D.pulse(), "-=0.8");
+  if (heroWords.length) tl.to(heroWords, { yPercent: 0, duration: 1, stagger: 0.045, ease: "power4.out" }, intro ? "-=0.55" : 0);
+  if (heroFades.length) tl.to(heroFades, { y: 0, opacity: 1, duration: 0.9, stagger: 0.1, ease: "power3.out" }, "-=0.7");
+  tl.add(() => window.MNM3D && MNM3D.pulse(), "-=0.8");
   const go = () => tl.play();
   document.fonts?.ready ? document.fonts.ready.then(() => setTimeout(go, 150)) : go();
 
@@ -216,7 +227,7 @@
   document.querySelectorAll(".roadmap").forEach((r) => {
     gsap.to(r.querySelector(".rm-fill"), { height: () => r.offsetHeight - 16 + "px", ease: "none",
       scrollTrigger: { trigger: r, start: "top 70%", end: "bottom 60%", scrub: true, invalidateOnRefresh: true } });
-    r.querySelectorAll(".rm-step").forEach((st) => gsap.from(st, { x: 40, opacity: 0, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: st, start: "top 85%" } }));
+    r.querySelectorAll(".rm-step").forEach((st) => gsap.from(st, { y: 30, opacity: 0, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: st, start: "top 85%" } }));
   });
 
   /* ---------- quote lights up word by word ---------- */
@@ -282,10 +293,11 @@
   /* ---------- custom cursor ---------- */
   const cur = document.querySelector(".cursor");
   if (cur) {
-    root.classList.add("has-cursor");
     const cx = gsap.quickTo(cur, "x", { duration: 0.35, ease: "power3" });
     const cy = gsap.quickTo(cur, "y", { duration: 0.35, ease: "power3" });
-    addEventListener("pointermove", (e) => { cx(e.clientX); cy(e.clientY); });
+    // hide the OS cursor only once ours is actually following the pointer; give it back on any JS error
+    addEventListener("pointermove", (e) => { cx(e.clientX); cy(e.clientY); root.classList.add("has-cursor"); });
+    addEventListener("error", () => root.classList.remove("has-cursor"));
     document.querySelectorAll("a, button, summary, .tilt").forEach((el) => {
       el.addEventListener("pointerenter", () => cur.classList.add("big"));
       el.addEventListener("pointerleave", () => cur.classList.remove("big"));

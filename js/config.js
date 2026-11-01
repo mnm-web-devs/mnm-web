@@ -6,5 +6,5 @@ window.MNM_LINKS = {
   discord: "", // Discord invite, e.g. "https://discord.gg/xxxxxxx"
   apply: "",   // staff application form, e.g. a Google Form link
   partner: "", // partnership form or link
-  email: "",   // contact email, e.g. "mailto:team@mnm.org"
+  email: "mailto:medineuromatics@gmail.com", // contact email
 };

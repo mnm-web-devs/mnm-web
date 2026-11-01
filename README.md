@@ -52,3 +52,15 @@ To connect the backend, only touch `js/api.js`:
 3. The admin redirect in `js/shell.js` is only a UI guard. The API must also check the role on every admin request.
 
 Files: `js/api.js` (data), `js/auth.js` (login page), `js/shell.js` (shared sidebar/guard/toasts), `js/dashboard.js`, `js/admin.js`, `css/app.css`.
+
+## Audit fixes (Nov 2026)
+
+Fixes from `Audit.md`. Things to know when editing:
+
+- **Fonts are self-hosted** (`assets/fonts/` + `css/fonts.css`). Don't add Google Fonts links back (privacy / GDPR).
+- **Security headers + CSP** live in `vercel.json`. If you add an external service (Clerk, analytics, a form provider), add its domain to the matching CSP directive (`script-src`, `connect-src`, `frame-src`, `img-src`), or it will be blocked.
+- **Vendor files are pinned** with SRI hashes. Versions and hashes are in `vendor/versions.txt`; if you replace a vendor file, update the `integrity` attribute in every HTML file.
+- **Domain:** canonical/OG URLs, `robots.txt` and `sitemap.xml` use `https://mnm-liard.vercel.app`. When mnmstem.study is live, replace that string everywhere (one find-and-replace).
+- **Opportunities:** entries in `js/opportunities.js` need `name`, `cat`, `url`, `desc`; incomplete ones are skipped with a console warning, and links must be `http(s)`.
+- **Marquee:** list each word once; the loop copy is created by JS.
+- New pages: `privacy.html`, `404.html`. New files: `robots.txt`, `sitemap.xml`, `favicon.ico`, `assets/og.png` (link previews), `assets/apple-touch-icon.png`.
