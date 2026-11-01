@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neuron Lab | MNM</title>
+  <meta name="description" content="Fire a real neuron in your browser: an interactive Hodgkin–Huxley simulation of the action potential, with six guided experiments." />
+  <meta name="theme-color" content="#050f22" />
+  <link rel="canonical" href="https://mnmstem.study/neuron.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MNM" />
+  <meta property="og:title" content="Neuron Lab | MNM" />
+  <meta property="og:description" content="Fire a real neuron in your browser: an interactive Hodgkin–Huxley simulation of the action potential, with six guided experiments." />
+  <meta property="og:url" content="https://mnmstem.study/neuron.html" />
+  <meta property="og:image" content="https://mnmstem.study/assets/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Neuron Lab | MNM" />
+  <meta name="twitter:description" content="Fire a real neuron in your browser: an interactive Hodgkin–Huxley simulation of the action potential, with six guided experiments." />
+  <meta name="twitter:image" content="https://mnmstem.study/assets/og.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/fonts.css" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://mnmstem.study/"}, {"@type": "ListItem", "position": 2, "name": "Neuron Lab", "item": "https://mnmstem.study/neuron.html"}]}</script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="neuron" data-seq="0,4">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <img class="gl-fallback" src="assets/logo-full-dark.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><i></i></div>
+  <div id="site-header"></div>
+
+  <main>
+    <section class="wrap page-hero compact">
+      <p class="crumbs fade-up"><a href="index.html">Home</a> / <a href="track-neuroscience.html">Neuroscience</a> / <span>Neuron Lab</span></p>
+      <p class="eyebrow fade-up">Interactive · Neuroscience × Mathematics</p>
+      <h1 class="split">Fire a <span class="grad">real neuron</span></h1>
+      <p class="lead fade-up">This neuron runs on the Hodgkin–Huxley equations, the Nobel Prize-winning model of how nerve cells send signals. Give it a push and watch an action potential happen, slowed down from 2 milliseconds.</p>
+    </section>
+
+    <section class="wrap">
+      <div class="lab" id="nl-lab">
+        <div class="lab-stage">
+          <canvas id="nl-cell" role="img" aria-label="A neuron. The cell body changes colour with its voltage and signals travel along the axon when it fires. Click to stimulate."></canvas>
+          <canvas id="nl-plot" role="img" aria-label="Graph of membrane voltage over the last 25 milliseconds, with the −55 mV threshold marked."></canvas>
+          <div class="lab-read" aria-live="polite">
+            <div class="vm"><span id="nl-v">−65</span><small>mV</small></div>
+            <div class="phase" id="nl-phase"><b>Resting</b><span>About −65 mV.</span></div>
+            <div class="lab-small">Spikes: <b id="nl-spikes">0</b></div>
+          </div>
+        </div>
+        <aside class="lab-panel" aria-label="Controls">
+          <button class="btn" type="button" id="nl-fire"><span>⚡ Stimulate</span></button>
+          <p class="lab-small">Or press Space, or click the neuron.</p>
+          <label class="sl"><span>Stimulus strength <output id="nl-strength-out"></output></span><input type="range" id="nl-strength" min="0" max="30" step="1" value="12" /></label>
+          <label class="tog">Keep the current on<input type="checkbox" id="nl-hold" /></label>
+          <label class="tog">Myelin sheath<input type="checkbox" id="nl-myelin" checked /></label>
+          <label class="tog">Block Na⁺ channels (TTX)<input type="checkbox" id="nl-ttx" /></label>
+          <label class="tog">Block K⁺ channels (TEA)<input type="checkbox" id="nl-tea" /></label>
+          <label class="sl"><span>Slow motion</span><input type="range" id="nl-speed" min="2" max="30" step="1" value="8" aria-label="Simulation speed in milliseconds per second" /></label>
+          <div class="gates" aria-hidden="true">
+            <div>Na⁺ open<i><b id="nl-gna" style="background:var(--teal-hi)"></b></i></div>
+            <div>K⁺ open<i><b id="nl-gk" style="background:var(--purple-hi)"></b></i></div>
+          </div>
+          <button class="ghost-btn" type="button" id="nl-reset">Reset</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="wrap section">
+      <p class="eyebrow">Try these</p>
+      <h2 class="split">Six experiments</h2>
+      <div class="exps">
+        <button class="exp" type="button" data-exp="weak" aria-pressed="false"><b>EXPERIMENT 1</b><h3>Too weak</h3><p>Fire a small pulse. The voltage rises, but never reaches −55 mV, so nothing happens. All or nothing.</p></button>
+        <button class="exp" type="button" data-exp="strong" aria-pressed="false"><b>EXPERIMENT 2</b><h3>Strong enough</h3><p>Cross the threshold and the neuron fires a full spike to about +40 mV, always the same size.</p></button>
+        <button class="exp" type="button" data-exp="train" aria-pressed="false"><b>EXPERIMENT 3</b><h3>Keep pushing</h3><p>Hold the current on. The neuron fires again and again; a stronger push makes it fire faster.</p></button>
+        <button class="exp" type="button" data-exp="ttx" aria-pressed="false"><b>EXPERIMENT 4</b><h3>Block sodium</h3><p>Pufferfish toxin (TTX) blocks Na⁺ channels. No spike can start: this is how the toxin paralyses.</p></button>
+        <button class="exp" type="button" data-exp="tea" aria-pressed="false"><b>EXPERIMENT 5</b><h3>Block potassium</h3><p>Without K⁺ channels the cell can't reset quickly, and the spike gets stuck high.</p></button>
+        <button class="exp" type="button" data-exp="myelin" aria-pressed="false"><b>EXPERIMENT 6</b><h3>Remove myelin</h3><p>Without its fatty insulation the signal crawls along the axon, as in multiple sclerosis.</p></button>
+      </div>
+    </section>
+
+    <section class="wrap section">
+      <div class="join-grid">
+        <div>
+          <p class="eyebrow">The math behind it</p>
+          <h2 class="split">Four equations, one spike</h2>
+          <p class="lead">The voltage changes as charged ions flow through three kinds of channels. Each channel's opening is its own small equation, so the whole neuron is four linked differential equations, solved here 100,000 times per simulated second.</p>
+          <p class="note"><b>C·dV/dt = I − g<sub>Na</sub>m³h(V − E<sub>Na</sub>) − g<sub>K</sub>n⁴(V − E<sub>K</sub>) − g<sub>L</sub>(V − E<sub>L</sub>)</b><br />Alan Hodgkin and Andrew Huxley found this in 1952 from experiments on the squid giant axon, and won the 1963 Nobel Prize in Physiology or Medicine.</p>
+        </div>
+        <aside class="side-card">
+          <p class="eyebrow">Why it matters in medicine</p>
+          <h3>Same channels, real cases</h3>
+          <ul class="checks">
+            <li>Local anaesthetics block Na⁺ channels so pain signals can't fire</li>
+            <li>Many epilepsy drugs calm over-active Na⁺ channels</li>
+            <li>Multiple sclerosis damages myelin and slows signals</li>
+          </ul>
+          <a class="btn magnetic" href="workshops.html?w=neurons#register"><span>Join the live workshop <b aria-hidden="true">→</b></span></a>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="vendor/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"></script>
+  <script src="vendor/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d"></script>
+  <script src="vendor/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed"></script>
+  <script src="js/config.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/neuron.js"></script>
+  <script type="module" src="js/scene.js"></script>
+  <script src="js/analytics.js"></script>
+</body>
+</html>
