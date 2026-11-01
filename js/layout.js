@@ -25,6 +25,7 @@
       </div>
       <a href="hub.html"${is("hub.html")}>Opportunities</a>
       <a href="about.html"${is("about.html")}>About</a>
+      <a href="login.html"${is("login.html")}>Sign in</a>
       <a class="btn btn-sm magnetic" href="join.html"${is("join.html")}><span>Join MNM</span></a>
     </nav>
     <button class="burger" type="button" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button>
@@ -34,6 +35,7 @@
     ${tracks.map(([href, t, , c]) => `<a href="${href}" style="--c:${c}">${t}</a>`).join("")}
     <a href="hub.html">Opportunities</a>
     <a href="about.html">About</a>
+    <a href="login.html">Sign in</a>
     <a class="btn" href="join.html"><span>Join MNM →</span></a>
   </div>`;
   }
