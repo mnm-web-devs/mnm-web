@@ -2,7 +2,7 @@
 
 The website of **MNM: Medicine · Neuroscience · Mathematics**, a YIMO-affiliated student STEM initiative.
 
-It is a static site (HTML + CSS + JS). There is no build step and nothing to install: open `index.html`, or run `python3 -m http.server 8000`.
+It is a static site (HTML + CSS + JS). There is no build step and nothing to install: run `python3 -m http.server 3000` and open http://localhost:3000. Always use port 3000: the hosted backend only accepts requests from localhost:3000, mnm-liard.vercel.app and mnmstem.study.
 
 ## Pages
 
