@@ -49,6 +49,7 @@ async function init() {
     draw(g, S);
     const data = g.getImageData(0, 0, S, S).data, filled = [];
     for (let y = 0; y < S; y += 2) for (let x = 0; x < S; x += 2) if (data[(y * S + x) * 4 + 3] > 128) filled.push(x, y);
+    cv.width = cv.height = 0; // release the pixel buffer right away
     const pos = new Float32Array(COUNT * 3), col = new Float32Array(COUNT * 3), n = filled.length / 2;
     const tmp = new THREE.Color();
     for (let i = 0; i < COUNT; i++) {
@@ -105,6 +106,8 @@ async function init() {
     // lateral 3/4 view: front of the brain points to the right
     const e = new THREE.Euler(0.12, -1.25, 0), v = new THREE.Vector3();
     for (let j = 0; j < COUNT; j++) { v.fromArray(pos, j * 3).applyEuler(e); v.toArray(pos, j * 3); }
+    // if sampling ran out of tries, copy already-placed points instead of leaving them all at (0,0,0)
+    if (i < COUNT) { const done = Math.max(1, i); for (let k = i; k < COUNT; k++) { const s = ((Math.random() * done) | 0) * 3; pos.copyWithin(k * 3, s, s + 3); col.copyWithin(k * 3, s, s + 3); } }
     return { pos, col };
   }
 
@@ -145,14 +148,21 @@ async function init() {
     return { pos, col };
   }
 
-  const SHAPES = [brain(), cross(), pi(), mnm(), cloud()];
+  /* shapes are built only when a page needs them; the first two now, the rest when the browser is idle */
+  const MAKERS = [brain, cross, pi, mnm, cloud], CACHE = [];
+  const shape = (k) => CACHE[k] || (CACHE[k] = MAKERS[k]());
+  let seq = (document.body.dataset.seq || "0,1,2,3,4").split(",").map(Number);
+  const idle = window.requestIdleCallback || ((f) => setTimeout(f, 200));
+  const warm = (j) => { if (j < seq.length) idle(() => { shape(seq[j]); warm(j + 1); }); };
 
   /* ---------- geometry ---------- */
   const geo = new THREE.BufferGeometry();
-  const aFrom = new THREE.BufferAttribute(SHAPES[0].pos.slice(), 3);
-  const aTo = new THREE.BufferAttribute(SHAPES[1].pos.slice(), 3);
-  const cFrom = new THREE.BufferAttribute(SHAPES[0].col.slice(), 3);
-  const cTo = new THREE.BufferAttribute(SHAPES[1].col.slice(), 3);
+  const S0 = shape(seq[0]), S1 = shape(seq[Math.min(1, seq.length - 1)]);
+  warm(2);
+  const aFrom = new THREE.BufferAttribute(S0.pos.slice(), 3);
+  const aTo = new THREE.BufferAttribute(S1.pos.slice(), 3);
+  const cFrom = new THREE.BufferAttribute(S0.col.slice(), 3);
+  const cTo = new THREE.BufferAttribute(S1.col.slice(), 3);
   const seed = new Float32Array(COUNT * 4);
   for (let i = 0; i < COUNT; i++) {
     const d = new THREE.Vector3(rand(), rand(), rand()).normalize();
@@ -216,14 +226,13 @@ async function init() {
 
   /* ---------- state driven from outside ---------- */
   const SCALE = mobile ? 0.8 : +(document.body.dataset.scale || 1);
-  let seq = (document.body.dataset.seq || "0,1,2,3,4").split(",").map(Number);
   let target = 0, current = 0, pair = 0, offsetX = 0, offsetTarget = 0;
   const mouse = new THREE.Vector2(9, 9), tilt = new THREE.Vector2(), ZERO = new THREE.Vector2();
   const ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hit = new THREE.Vector3();
 
   function setPair(i) {
     pair = i;
-    const A = SHAPES[seq[i]], B = SHAPES[seq[i + 1]];
+    const A = shape(seq[i]), B = shape(seq[i + 1]);
     aFrom.array.set(A.pos); cFrom.array.set(A.col);
     aTo.array.set(B.pos); cTo.array.set(B.col);
     aFrom.needsUpdate = aTo.needsUpdate = cFrom.needsUpdate = cTo.needsUpdate = true;
@@ -246,13 +255,21 @@ async function init() {
   });
 
   /* ---------- loop ---------- */
+  /* the loop stops completely while the tab is hidden, and drops to ~30 fps when nothing is moving */
   const clock = new THREE.Clock();
-  let visible = true;
-  document.addEventListener("visibilitychange", () => (visible = !document.hidden));
+  let raf = 0, lastMove = 0, odd = false;
+  addEventListener("pointermove", () => (lastMove = performance.now()), { passive: true });
+  addEventListener("scroll", () => (lastMove = performance.now()), { passive: true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { cancelAnimationFrame(raf); raf = 0; }
+    else if (!raf) { clock.getDelta(); raf = requestAnimationFrame(tick); }
+  });
 
   function tick() {
-    requestAnimationFrame(tick);
-    if (!visible) return;
+    raf = requestAnimationFrame(tick);
+    const settled = Math.abs(target - current) < 0.001 && Math.abs(offsetTarget - offsetX) < 0.001 && performance.now() - lastMove > 1500 && uniforms.uPulse.value < 0.01;
+    odd = !odd;
+    if (settled && odd) return;
     const dt = Math.min(clock.getDelta(), 0.05), time = clock.elapsedTime;
     current += (target - current) * (reduce ? 1 : Math.min(1, dt * 4));
     let i = Math.min(Math.floor(current), seq.length - 2);

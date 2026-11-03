@@ -3,20 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sign in — MNM</title>
+  <title>Sign in | MNM</title>
   <meta name="description" content="Sign in to your MNM account to track your progress, register for workshops and submit challenges." />
   <meta name="theme-color" content="#050f22" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/fonts.css" />
   <meta name="robots" content="noindex" />
-  <link rel="icon" type="image/png" href="assets/favicon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/app.css" />
 </head>
 <body data-page="login" data-seq="0,3" data-scale="0.7" class="auth-page">
   <canvas id="gl" aria-hidden="true"></canvas>
-  <img class="gl-fallback" src="assets/logo-full-dark.webp" alt="" aria-hidden="true" />
+  <img class="gl-fallback" src="assets/logo-full-dark.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
   <div class="grain" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"><i></i></div>
   <div id="site-header"></div>
@@ -57,6 +59,11 @@
       </div>
 
       <div class="tab-panel" id="signup" role="tabpanel" aria-labelledby="t-signup" hidden>
+        <div class="oauth">
+          <button class="oauth-btn" type="button" data-oauth="google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M12 10.2v3.9h5.4c-.2 1.3-1.6 3.8-5.4 3.8-3.3 0-5.9-2.7-5.9-6s2.6-6 5.9-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.4 12 2.4 6.7 2.4 2.4 6.7 2.4 12s4.3 9.6 9.6 9.6c5.5 0 9.2-3.9 9.2-9.4 0-.6-.1-1.1-.2-1.6H12z"/></svg>Continue with Google</button>
+          <button class="oauth-btn" type="button" data-oauth="discord"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#8B9BFF" d="M20 5.2A17 17 0 0 0 15.8 4l-.5 1a15.6 15.6 0 0 0-6.6 0l-.5-1A17 17 0 0 0 4 5.2 18 18 0 0 0 .9 17.4 17 17 0 0 0 6.1 20l1.1-1.8c-.6-.2-1.2-.5-1.8-.9l.4-.3a12 12 0 0 0 12.4 0l.4.3c-.6.4-1.2.7-1.8.9l1.1 1.8a17 17 0 0 0 5.2-2.6A18 18 0 0 0 20 5.2zM8.3 14.9c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1zm7.4 0c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1z"/></svg>Continue with Discord</button>
+        </div>
+        <p class="or"><span>or sign up with email</span></p>
         <form id="signup-form" class="form" novalidate>
           <label class="field"><span>Full name</span><input type="text" name="name" autocomplete="name" required placeholder="Your name" /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required placeholder="you@school.org" /></label>
@@ -71,6 +78,7 @@
             </div>
           </fieldset>
           <label class="check"><input type="checkbox" name="consent" required /><span>I agree to the community rules. If I'm under 16, a parent or guardian knows I'm signing up.</span></label>
+          <p class="privacy-note">We only use your name and email to run your MNM account and send you event info. We never sell or share it. <a href="privacy.html">Privacy</a></p>
           <p class="form-msg" role="alert" aria-live="polite"></p>
           <button class="btn btn-block" type="submit"><span>Create account <b aria-hidden="true">→</b></span></button>
         </form>
@@ -78,14 +86,15 @@
     </section>
   </main>
 
-  <script src="vendor/gsap.min.js"></script>
-  <script src="vendor/ScrollTrigger.min.js"></script>
-  <script src="vendor/lenis.min.js"></script>
+  <script src="vendor/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"></script>
+  <script src="vendor/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d"></script>
+  <script src="vendor/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed"></script>
   <script src="js/config.js"></script>
   <script src="js/layout.js"></script>
   <script src="js/app.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script type="module" src="js/scene.js"></script>
+  <script src="js/analytics.js"></script>
 </body>
 </html>

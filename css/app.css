@@ -38,7 +38,7 @@
 .muted { color: var(--muted); }
 .small { font-size: .85rem; }
 .block { display: block; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .row-end { display: flex; justify-content: flex-end; gap: 10px; }
 
@@ -129,12 +129,12 @@
 .track-list { display: grid; gap: 6px; }
 .track-row { display: flex; align-items: center; gap: 14px; padding: 12px; margin: 0 -12px; border-radius: 14px; color: inherit; text-decoration: none; transition: background .2s; }
 .track-row:hover { background: rgba(255,255,255,.04); }
-.track-row i, .track-tile i { width: 42px; height: 42px; flex: none; display: grid; place-items: center; border-radius: 12px; background: color-mix(in srgb, var(--c) 18%, transparent); color: var(--c); font: 700 1.2rem var(--head); font-style: normal; }
+.track-row i, .track-tile i { width: 42px; height: 42px; flex: none; display: grid; place-items: center; border-radius: 12px; background: rgba(255,255,255,.09); background: color-mix(in srgb, var(--c) 18%, transparent); color: var(--c); font: 700 1.2rem var(--head); font-style: normal; }
 .track-row .grow { display: grid; gap: 5px; }
 .track-row small { color: var(--muted); font-size: .8rem; }
 .track-row em { font: 700 .95rem var(--head); color: var(--c); }
 .grow { flex: 1; min-width: 0; }
-.track-tile { padding: 22px; border-radius: 20px; border: 1px solid var(--line); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 14%, transparent), transparent 60%), var(--card); display: grid; gap: 12px; align-content: start; }
+.track-tile { padding: 22px; border-radius: 20px; border: 1px solid var(--line); background: linear-gradient(160deg, rgba(255,255,255,.07), transparent 60%), var(--card); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 14%, transparent), transparent 60%), var(--card); display: grid; gap: 12px; align-content: start; }
 .track-tile h3 { font-size: 1.3rem; }
 .track-tile p { margin: 0; }
 .track-tile .next { display: grid; gap: 2px; font-weight: 600; }
@@ -149,7 +149,7 @@
 .list time { color: var(--muted); font-size: .76rem; white-space: nowrap; }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
 .empty { color: var(--muted); font-size: .9rem; text-align: center; padding: 24px 10px !important; display: block !important; }
-.tag { display: inline-block; padding: 4px 9px; border-radius: 999px; background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--c); font: 600 .72rem/1.2 var(--head); white-space: nowrap; }
+.tag { display: inline-block; padding: 4px 9px; border-radius: 999px; background: rgba(255,255,255,.08); background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--c); font: 600 .72rem/1.2 var(--head); white-space: nowrap; }
 .challenge-card { background: radial-gradient(500px 220px at 100% 0%, rgba(48,195,156,.18), transparent 70%), var(--card); }
 .challenge-card h4 { margin: 0; font: 700 1.25rem/1.25 var(--head); }
 .challenge-card p { margin: 0; }
@@ -176,7 +176,7 @@
 .ws { display: flex; gap: 16px; align-items: center; padding: 18px; border-radius: 18px; border: 1px solid var(--line); background: var(--card); }
 .ws h3 { margin: 8px 0 4px; font-size: 1rem; line-height: 1.3; }
 .ws p { margin: 0; font-size: .84rem; }
-.ws-date { width: 58px; flex: none; text-align: center; padding: 10px 0; border-radius: 14px; background: color-mix(in srgb, var(--c) 14%, transparent); }
+.ws-date { width: 58px; flex: none; text-align: center; padding: 10px 0; border-radius: 14px; background: rgba(255,255,255,.07); background: color-mix(in srgb, var(--c) 14%, transparent); }
 .ws-date b { display: block; font: 700 1.5rem/1 var(--head); color: var(--c); }
 .ws-date small { color: var(--muted); text-transform: uppercase; font-size: .72rem; letter-spacing: .08em; }
 .seats { margin-top: 6px !important; color: var(--mint); font-weight: 600; }
@@ -266,3 +266,5 @@
   .sub .btn { flex: 1; }
 }
 @media (prefers-reduced-motion: reduce) { .view, .chart .col > span, .toast { animation: none; } }
+.privacy-note { margin: 0; font-size: .78rem; line-height: 1.45; color: #7d8fab; }
+.privacy-note a { color: var(--mint); }
