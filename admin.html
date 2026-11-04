@@ -71,7 +71,7 @@
     <section class="view" id="students" tabindex="-1" hidden>
       <div class="toolbar">
         <label class="search sm"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="q" placeholder="Search name, email or country" aria-label="Search students" /></label>
-        <select id="f-track" aria-label="Filter by track"><option value="">All tracks</option><option value="neuro">Neuroscience</option><option value="med">Medicine</option><option value="math">Mathematics</option></select>
+        <select id="f-track" aria-label="Filter by track"><option value="">All tracks</option><option value="neuro">Neuroscience</option><option value="med">Medicine</option><option value="math">Mathematics</option><option value="all">All STEM interests</option></select>
         <select id="f-status" aria-label="Filter by status"><option value="">Any status</option><option value="active">Active</option><option value="new">New</option><option value="pending">Pending</option></select>
         <button class="btn btn-sm btn-ghost" type="button" id="export"><span>Export CSV</span></button>
       </div>
@@ -135,6 +135,8 @@
     </form>
   </div>
 
+  <script src="js/env.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/shell.js"></script>
   <script src="js/admin.js"></script>

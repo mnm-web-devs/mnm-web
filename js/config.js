@@ -10,10 +10,11 @@ window.MNM_LINKS = {
   email: "mailto:medineuromatics@gmail.com", // contact email
 };
 
-/* Backend + sign-in (public values, safe to ship in the browser).
-   Local dev: serve the site on port 3000 (python3 -m http.server 3000), the API only accepts
-   http://localhost:3000, https://mnm-liard.vercel.app and https://mnmstem.study. */
-window.MNM_ENV = {
-  API_BASE_URL: "https://mnm-web-ochre.vercel.app/api/v1",
-  CLERK_PUBLISHABLE_KEY: "pk_test_YWxlcnQtZG9nLTQyMzEuY2xlcmsuYWNjb3VudHMuZGV2JA",
+/* Public runtime values may be injected by the local server before this file loads. */
+const runtimeEnv = window.MNM_ENV || {};
+window.MNM_CONFIG = {
+  apiBaseUrl: runtimeEnv.MNM_API_BASE_URL || runtimeEnv.API_BASE_URL || "https://mnm-web-ochre.vercel.app/api/v1",
+  clerkPublishableKey: runtimeEnv.MNM_CLERK_PUBLISHABLE_KEY ||
+    runtimeEnv.CLERK_PUBLISHABLE_KEY ||
+    "pk_test_YWxlcnQtZG9nLTQyMzEuY2xlcmsuYWNjb3VudHMuZGV2JA",
 };

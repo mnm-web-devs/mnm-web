@@ -109,9 +109,10 @@
         <header><h3>Profile</h3></header>
         <form class="form" id="profile-form">
           <label class="field"><span>Name</span><input name="name" data-user-value="name" /></label>
+          <label class="field"><span>Username</span><input name="username" autocomplete="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9][A-Za-z0-9._-]*" required /></label>
           <label class="field"><span>Email</span><input name="email" type="email" data-user-value="email" disabled /></label>
           <label class="field"><span>Main interest</span>
-            <select name="track"><option value="neuro">Neuroscience</option><option value="med">Medicine</option><option value="math">Mathematics</option></select></label>
+            <select name="track"><option value="neuro">Neuroscience</option><option value="med">Medicine</option><option value="math">Mathematics</option><option value="all">All STEM interests</option></select></label>
           <label class="check"><input type="checkbox" checked /><span>Email me about new workshops and challenges</span></label>
           <div class="row-end"><button class="btn btn-sm" type="submit"><span>Save changes</span></button></div>
         </form>
@@ -119,6 +120,8 @@
     </section>
   </div>
 
+  <script src="js/env.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/shell.js"></script>
   <script src="js/dashboard.js"></script>

@@ -1,10 +1,20 @@
 /* MNM — admin dashboard. Reads MNM_API.admin (js/api.js). */
 (async () => {
+  await window.MNM_UI_READY;
   if (!window.MNM_UI) return;
   const { $, $$, esc, fmtDate, fmtTime, ago, initials, toast, openModal, closeModal } = MNM_UI;
   const API = MNM_API.admin;
-  const TRACK = { neuro: ["Neuroscience", "var(--purple-hi)"], med: ["Medicine", "var(--teal-hi)"], math: ["Mathematics", "var(--mint)"] };
-  const tag = (t) => `<span class="tag" style="--c:${TRACK[t][1]}">${TRACK[t][0]}</span>`;
+  const TRACK = {
+    neuro: ["Neuroscience", "var(--purple-hi)"],
+    med: ["Medicine", "var(--teal-hi)"],
+    math: ["Mathematics", "var(--mint)"],
+    all: ["All STEM interests", "var(--mint)"],
+    other: ["Not specified", "var(--muted)"],
+  };
+  const tag = (t) => {
+    const [name, color] = TRACK[t] || TRACK.other;
+    return `<span class="tag" style="--c:${color}">${name}</span>`;
+  };
 
   MNM_UI.start();
   const [stats, students, workshops, subs, inq] = await Promise.all([API.stats(), API.students(), API.workshops(), API.submissions(), API.inquiries()]);
@@ -26,17 +36,20 @@
   };
   drawStats();
 
-  const max = Math.max(...stats.byDay);
+  const max = Math.max(1, ...stats.byDay);
   $("#chart-total").textContent = stats.byDay.reduce((a, b) => a + b, 0) + " total";
   $("#chart").innerHTML = stats.byDay.map((v, i) => {
     const d = new Date(Date.now() - (13 - i) * 864e5);
     return `<div class="col" title="${fmtDate(d)}: ${v}"><span style="--h:${(v / max) * 100}%"><em>${v}</em></span><small>${i % 2 ? "" : d.getDate()}</small></div>`;
   }).join("");
 
-  const byTrack = Object.keys(TRACK).map((k) => [k, students.filter((s) => s.track === k).length]);
+  const byTrack = Object.keys(TRACK).map((k) => [
+    k,
+    k === "other" ? students.filter((s) => !TRACK[s.track]).length : students.filter((s) => s.track === k).length,
+  ]);
   const total = students.length;
   $("#split").innerHTML = byTrack.map(([k, n]) => `
-    <div class="sb"><span class="sb-l">${TRACK[k][0]}</span><span class="bar" style="--c:${TRACK[k][1]}"><span style="width:${(n / total) * 100}%"></span></span><b>${Math.round((n / total) * 100)}%</b></div>`).join("");
+    <div class="sb"><span class="sb-l">${TRACK[k][0]}</span><span class="bar" style="--c:${TRACK[k][1]}"><span style="width:${total ? (n / total) * 100 : 0}%"></span></span><b>${total ? Math.round((n / total) * 100) : 0}%</b></div>`).join("");
 
   const drawMini = () => {
     const pend = subs.filter((s) => s.status === "pending");
@@ -88,8 +101,18 @@
   $("#w-body").addEventListener("click", async (e) => {
     const b = e.target.closest("[data-del]"); if (!b) return;
     const w = workshops.find((x) => x.id === b.dataset.del);
+    if (!w) return;
     if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = "Sure? Delete"; setTimeout(() => { b.dataset.confirm = ""; b.textContent = "Delete"; }, 3000); return; }
-    await API.deleteWorkshop(w.id); drawWs(); toast(`Deleted "${w.title}".`);
+    b.disabled = true;
+    try {
+      await API.deleteWorkshop(w.id);
+      workshops.splice(workshops.indexOf(w), 1);
+      drawWs();
+      toast(`Deleted "${w.title}".`);
+    } catch (error) {
+      toast(error.message, "err");
+      b.disabled = false;
+    }
   });
 
   const modal = $("#ws-modal"), form = $("#ws-form");
@@ -99,9 +122,20 @@
     const bad = [...form.querySelectorAll("[required]")].find((i) => !i.checkValidity());
     if (bad) { form.querySelector(".form-msg").textContent = "Please fill in the title, date and seats."; return bad.focus(); }
     const f = Object.fromEntries(new FormData(form));
-    const w = await API.createWorkshop({ title: f.title.trim(), track: f.track, seats: +f.seats, mins: +f.mins, date: new Date(f.date).toISOString(), host: f.host.trim() || "MNM" });
-    closeModal(modal); drawWs(); toast(`"${w.title}" created.`);
-    if (location.hash !== "#workshops") location.hash = "workshops";
+    const submit = form.querySelector('button[type="submit"]');
+    submit.disabled = true;
+    try {
+      const w = await API.createWorkshop({ title: f.title.trim(), track: f.track, seats: +f.seats, mins: +f.mins, date: new Date(f.date).toISOString(), host: f.host.trim() || "MNM" });
+      workshops.push(w);
+      closeModal(modal);
+      drawWs();
+      toast(`"${w.title}" created.`);
+      if (location.hash !== "#workshops") location.hash = "workshops";
+    } catch (error) {
+      form.querySelector(".form-msg").textContent = error.message;
+    } finally {
+      submit.disabled = false;
+    }
   });
 
   /* ---------- submissions ---------- */
@@ -120,8 +154,14 @@
   $$("[data-sf]").forEach((b) => b.addEventListener("click", () => { sf = b.dataset.sf; $$("[data-sf]").forEach((x) => x.setAttribute("aria-pressed", x === b)); drawSubs(); }));
   $("#sub-list").addEventListener("click", async (e) => {
     const b = e.target.closest("[data-rev]"); if (!b) return;
-    const s = await API.review(b.dataset.id, b.dataset.rev);
-    toast(`${s.student}: ${s.status}.`); drawSubs(); drawMini(); drawStats();
+    b.disabled = true;
+    try {
+      const s = await API.review(b.dataset.id, b.dataset.rev);
+      toast(`${s.student}: ${s.status}.`); drawSubs(); drawMini(); drawStats();
+    } catch (error) {
+      toast(error.message, "err");
+      b.disabled = false;
+    }
   });
 
   /* ---------- inquiries ---------- */
@@ -137,6 +177,15 @@
   drawInq();
   $("#inq-list").addEventListener("click", async (e) => {
     const b = e.target.closest("[data-inq]"); if (!b) return;
-    await API.markInquiry(b.dataset.inq, "replied"); drawInq(); drawMini(); drawStats(); toast("Marked as replied.");
+    b.disabled = true;
+    try {
+      await API.markInquiry(b.dataset.inq, "replied"); drawInq(); drawMini(); drawStats(); toast("Marked as replied.");
+    } catch (error) {
+      toast(error.message, "err");
+      b.disabled = false;
+    }
   });
-})();
+})().catch((error) => {
+  console.error("Could not load the admin dashboard:", error);
+  window.MNM_UI?.toast(error.message, "err");
+});

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Completing sign in — MNM</title>
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body class="auth-page">
+  <main class="auth wrap">
+    <section class="auth-card" aria-live="polite">
+      <p class="eyebrow">Your MNM account</p>
+      <h1 id="oauth-status">Completing sign in…</h1>
+      <form id="oauth-signup-form" class="form" hidden>
+        <p class="muted">Finish creating your MNM account by choosing a username and main interest.</p>
+        <label class="field"><span>Username</span><input name="username" autocomplete="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9][A-Za-z0-9._-]*" required /></label>
+        <label class="field"><span>Main interest</span>
+          <select name="track" required>
+            <option value="" selected disabled>Choose your main interest</option>
+            <option value="neuro">Neuroscience</option>
+            <option value="med">Medicine</option>
+            <option value="math">Mathematics</option>
+          </select>
+        </label>
+        <p id="oauth-signup-error" class="form-msg" role="alert"></p>
+        <button class="btn btn-block" type="submit"><span>Continue to MNM</span></button>
+      </form>
+      <p id="oauth-error" class="form-msg" role="alert"></p>
+      <a id="oauth-retry" class="btn btn-block" href="login.html" hidden><span>Return to sign in</span></a>
+    </section>
+  </main>
+  <script src="js/env.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/oauth-callback.js"></script>
+</body>
+</html>
