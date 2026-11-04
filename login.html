@@ -55,7 +55,6 @@
           <p class="form-msg" role="alert" aria-live="polite"></p>
           <button class="btn btn-block" type="submit"><span>Sign in <b aria-hidden="true">→</b></span></button>
         </form>
-        <p class="demo-note">Demo mode: any email + 8-character password works. Emails with "admin" open the admin dashboard.</p>
       </div>
 
       <div class="tab-panel" id="signup" role="tabpanel" aria-labelledby="t-signup" hidden>
@@ -67,12 +66,13 @@
         <form id="signup-form" class="form" novalidate>
           <label class="field"><span>Full name</span><input type="text" name="name" autocomplete="name" required placeholder="Your name" /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required placeholder="you@school.org" /></label>
+          <label class="field"><span>Username</span><input type="text" name="username" autocomplete="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9][A-Za-z0-9._-]*" required placeholder="Choose a username" /></label>
           <label class="field"><span>Password</span>
             <span class="pw"><input type="password" name="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters" /><button type="button" class="pw-toggle" aria-label="Show password">Show</button></span></label>
           <fieldset class="field">
             <legend>Main interest</legend>
             <div class="picks">
-              <label class="pick" style="--c:var(--purple-hi)"><input type="radio" name="track" value="neuro" checked /><span>◉ Neuroscience</span></label>
+              <label class="pick" style="--c:var(--purple-hi)"><input type="radio" name="track" value="neuro" required /><span>◉ Neuroscience</span></label>
               <label class="pick" style="--c:var(--teal-hi)"><input type="radio" name="track" value="med" /><span>✚ Medicine</span></label>
               <label class="pick" style="--c:var(--mint)"><input type="radio" name="track" value="math" /><span>π Mathematics</span></label>
             </div>
@@ -89,6 +89,7 @@
   <script src="vendor/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"></script>
   <script src="vendor/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d"></script>
   <script src="vendor/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed"></script>
+  <script src="js/env.js"></script>
   <script src="js/config.js"></script>
   <script src="js/layout.js"></script>
   <script src="js/app.js"></script>

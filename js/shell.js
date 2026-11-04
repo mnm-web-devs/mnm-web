@@ -1,7 +1,14 @@
 /* MNM — shared dashboard shell: auth guard, sidebar sections, mobile drawer, toasts, helpers. */
-(() => {
+window.MNM_UI_READY = (async () => {
   const need = document.body.dataset.role; // "student" | "admin"
-  const user = MNM_API.auth.me();
+  let user;
+  try {
+    user = await MNM_API.auth.ready();
+  } catch (error) {
+    console.error(error);
+    location.replace("login.html");
+    return;
+  }
   if (!user) { location.replace("login.html"); return; }
   if (need === "admin" && user.role !== "admin") { location.replace("dashboard.html"); return; }
 

@@ -32,7 +32,7 @@ It is a static site (HTML + CSS + JS). There is no build step and nothing to ins
 
 The libraries are vendored in `vendor/`, so the site works on any static host: GitHub Pages, Vercel or Netlify. If the visitor prefers reduced motion, the animations turn off. If WebGL is unavailable, the logo is shown instead.
 
-## Accounts & dashboards (frontend ready, backend to wire)
+## Accounts & dashboards
 
 New pages:
 
@@ -40,16 +40,11 @@ New pages:
 - `dashboard.html`: student dashboard (overview, tracks, workshops with registration, monthly challenge submission, leaderboard, profile)
 - `admin.html`: admin dashboard (stats + chart, students table with search/filter/sort/CSV export, create/delete workshops, review submissions, partner/sponsor inquiries)
 
-Right now everything runs on **mock data** in `js/api.js`, so the pages work without a backend
-(demo login: any email + 8+ character password; an email containing "admin" opens the admin dashboard).
+The account and dashboard flows call the MNM API. For local development, copy `.env.example` to `.env`, set `MNM_CLERK_PUBLISHABLE_KEY` to your Clerk **publishable** key, then run `python serve_frontend.py`. This small local server exposes only those two public settings to the browser through `js/env.js`; the browser cannot read `.env` directly. Do not put Clerk's secret key, the Supabase service-role key, or the admin JWT signing secret in the frontend `.env`.
 
-To connect the backend, only touch `js/api.js`:
+`MNM_API_BASE_URL` should point to the backend API, for example `https://mnm-web-ochre.vercel.app/api/v1`. `MNM_CLERK_PUBLISHABLE_KEY` is safe to expose; it must match the Clerk instance configured by the backend.
 
-1. Replace each `MNM_API.student.*` and `MNM_API.admin.*` function body with a `fetch()` to the API.
-   Keep the function names, arguments and return shapes (the mock tables at the top show the exact shapes).
-2. Replace `MNM_API.auth.*` with Clerk (each function has a comment with the matching Clerk call).
-   `auth.me()` must return `{ id, name, email, role }`, with `role: "admin"` for leads (e.g. from Clerk `publicMetadata.role`).
-3. The admin redirect in `js/shell.js` is only a UI guard. The API must also check the role on every admin request.
+Students authenticate through Clerk. Set the OAuth callback/redirect URL for the local or deployed frontend to `oauth-callback.html` in Clerk. New Google/Discord accounts must choose a username and main interest before entering the dashboard. Email/password account creation also requires a user-chosen username and main interest, then verifies the email. These values are saved to the backend student profile. Admin email/password sign-in uses the backend and stores its short-lived bearer token in the current browser session. The API enforces authorization independently of the page-level dashboard guard.
 
 Files: `js/api.js` (data), `js/auth.js` (login page), `js/shell.js` (shared sidebar/guard/toasts), `js/dashboard.js`, `js/admin.js`, `css/app.css`.
 
@@ -64,3 +59,7 @@ Fixes from `Audit.md`. Things to know when editing:
 - **Opportunities:** entries in `js/opportunities.js` need `name`, `cat`, `url`, `desc`; incomplete ones are skipped with a console warning, and links must be `http(s)`.
 - **Marquee:** list each word once; the loop copy is created by JS.
 - New pages: `privacy.html`, `404.html`. New files: `robots.txt`, `sitemap.xml`, `favicon.ico`, `assets/og.png` (link previews), `assets/apple-touch-icon.png`.
+
+The backend's `ALLOWED_ORIGINS` must include the exact frontend origins, including `https://mnm-liard.vercel.app` and, when live, `https://mnmstem.study`. Applications are intentionally separate from creating a student account and are not currently shown in the student dashboard.
+
+API endpoints and request shapes are documented in the backend repository's `API_REFERENCE.md`.
