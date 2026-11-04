@@ -268,3 +268,25 @@
 @media (prefers-reduced-motion: reduce) { .view, .chart .col > span, .toast { animation: none; } }
 .privacy-note { margin: 0; font-size: .78rem; line-height: 1.45; color: #7d8fab; }
 .privacy-note a { color: var(--mint); }
+
+/* UI polish (backend-integration pages) */
+/* Anything with the hidden attribute stays hidden, even if a class sets display (e.g. .form, .btn). */
+[hidden] { display: none !important; }
+/* Opening a section by #hash scrolled it under the sticky top bar; keep it below the bar. */
+.view { scroll-margin-top: 120px; }
+html { scroll-padding-top: 120px; }
+/* OAuth callback: single centered card */
+.auth:has(> .auth-card:only-child) { grid-template-columns: minmax(0, 480px); justify-content: center; }
+.auth-card > h1 { font-size: clamp(1.7rem, 3.2vw, 2.3rem); line-height: 1.15; margin-bottom: 18px; }
+.auth-card > .form-msg:not(:empty) { margin-bottom: 16px; }
+/* Admin on phones: tables scroll sideways instead of squeezing, review rows wrap their buttons onto a second line. */
+@media (max-width: 720px) {
+  .table { min-width: 640px; }
+  .table td:first-child { min-width: 180px; }
+  .sub .grow { flex: 1 1 calc(100% - 64px); min-width: 0; }
+  .sub .text-btn { margin-right: auto; overflow-wrap: anywhere; }
+}
+@media (max-width: 520px) {
+  .top h1, .top h2 { font-size: 1.25rem; }
+  .top .btn-sm { padding-inline: 12px; white-space: nowrap; }
+}
