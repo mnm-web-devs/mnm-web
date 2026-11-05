@@ -256,9 +256,13 @@
           const signInStatus = clerk.client?.signIn?.status || "none";
           const signUpStatus = clerk.client?.signUp?.status || "none";
           const missingFields = clerk.client?.signUp?.missingFields || [];
-          const details = missingFields.length ? ` Clerk still requires: ${missingFields.join(", ")}.` : "";
+          const details = missingFields.length
+            ? ` Clerk still requires: ${missingFields.join(", ")}.`
+            : signInStatus === "needs_identifier" && signUpStatus === "none"
+              ? " Clerk did not complete the OAuth redirect. Check the browser console for blocked Clerk scripts and verify the configured OAuth callback URLs."
+              : " Check the Clerk OAuth connection and callback configuration, then try again.";
           sessionStorage.removeItem(OAUTH_CALLBACK_HANDLED_KEY);
-          throw new Error(`Clerk OAuth did not complete an active session (sign-in: ${signInStatus}, sign-up: ${signUpStatus}).${details} Finish the required fields in Clerk sign-up settings.`);
+          throw new Error(`Clerk OAuth did not complete an active session (sign-in: ${signInStatus}, sign-up: ${signUpStatus}).${details}`);
         }
         return currentUser;
       },
