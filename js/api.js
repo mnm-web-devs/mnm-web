@@ -94,10 +94,10 @@
     };
   }
 
-  async function handleOAuthRedirectOnce(clerk) {
+  async function handleOAuthRedirectOnce(clerk, force = false) {
     const hasRedirectStatus = new URLSearchParams(location.search).has("__clerk_status") ||
       new URLSearchParams(location.hash.slice(1)).has("__clerk_status");
-    if (!hasRedirectStatus || sessionStorage.getItem(OAUTH_CALLBACK_HANDLED_KEY) === "true") return;
+    if ((!force && !hasRedirectStatus) || sessionStorage.getItem(OAUTH_CALLBACK_HANDLED_KEY) === "true") return;
     if (typeof clerk.handleRedirectCallback !== "function") {
       throw new Error("Clerk could not finish the sign-in redirect. Please try signing in again.");
     }
@@ -235,7 +235,7 @@
           if (currentUser) return currentUser;
           sessionStorage.removeItem(OAUTH_SIGNUP_COMPLETED_KEY);
         }
-        await handleOAuthRedirectOnce(clerk);
+        await handleOAuthRedirectOnce(clerk, true);
         const signUp = clerk.client?.signUp;
         const signIn = clerk.client?.signIn;
         const completedSignUp = signUp?.status === "complete" &&
@@ -256,9 +256,13 @@
           const signInStatus = clerk.client?.signIn?.status || "none";
           const signUpStatus = clerk.client?.signUp?.status || "none";
           const missingFields = clerk.client?.signUp?.missingFields || [];
-          const details = missingFields.length ? ` Clerk still requires: ${missingFields.join(", ")}.` : "";
+          const details = missingFields.length
+            ? ` Clerk still requires: ${missingFields.join(", ")}.`
+            : signInStatus === "needs_identifier" && signUpStatus === "none"
+              ? " Clerk did not complete the OAuth redirect. Check the browser console for blocked Clerk scripts and verify the configured OAuth callback URLs."
+              : " Check the Clerk OAuth connection and callback configuration, then try again.";
           sessionStorage.removeItem(OAUTH_CALLBACK_HANDLED_KEY);
-          throw new Error(`Clerk OAuth did not complete an active session (sign-in: ${signInStatus}, sign-up: ${signUpStatus}).${details} Finish the required fields in Clerk sign-up settings.`);
+          throw new Error(`Clerk OAuth did not complete an active session (sign-in: ${signInStatus}, sign-up: ${signUpStatus}).${details}`);
         }
         return currentUser;
       },
