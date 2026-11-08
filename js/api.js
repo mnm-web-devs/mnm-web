@@ -6,6 +6,7 @@
   const OAUTH_CALLBACK_HANDLED_KEY = "mnm-oauth-callback-handled";
   const OAUTH_SIGNUP_COMPLETED_KEY = "mnm-oauth-signup-completed";
   const tracks = { neuro: "neuroscience", med: "medicine", math: "mathematics" };
+  const NEW_PASSWORD_PATTERN = /^(?=.*[A-Z])(?=(?:.*[a-z]){2})(?=.*\d)(?=.*[@$#&%*!]).*$/;
   let currentUser = null;
   let clerkPromise;
   let adminSubmissions = [];
@@ -62,7 +63,13 @@
         const scriptUrl = `https://${frontendApi}/npm/@clerk/clerk-js@6/dist/clerk.browser.js`;
         await loadClerkScript(scriptUrl, publishableKey);
         if (!window.Clerk) throw new Error("Clerk loaded without exposing its browser SDK.");
-        await window.Clerk.load();
+        const callbackUrls = getOAuthCallbackUrls();
+        await window.Clerk.load({
+          signInUrl: callbackUrls.signInUrl,
+          signUpUrl: callbackUrls.signUpUrl,
+          signInFallbackRedirectUrl: callbackUrls.signInFallbackRedirectUrl,
+          signUpFallbackRedirectUrl: callbackUrls.signUpFallbackRedirectUrl,
+        });
         return window.Clerk;
       })();
     }
@@ -88,8 +95,8 @@
     return {
       signInUrl: new URL("login.html", location.href).href,
       signUpUrl: callbackUrl,
-      signInFallbackRedirectUrl: new URL("dashboard.html", location.href).href,
-      signUpFallbackRedirectUrl: new URL("dashboard.html", location.href).href,
+      signInFallbackRedirectUrl: callbackUrl,
+      signUpFallbackRedirectUrl: callbackUrl,
       transferable: true,
     };
   }
@@ -362,6 +369,9 @@
         if (!cleanName || !cleanEmail || !password) {
           throw new Error("Enter your name, email, and password to create an account.");
         }
+        if (password.length < 8 || password.length > 30 || !NEW_PASSWORD_PATTERN.test(password)) {
+          throw new Error("Password must be 8–30 characters and include an uppercase letter, at least two lowercase letters, a number, and one of these: @ $ # & % * !");
+        }
         if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{2,29}$/.test(cleanUsername)) {
           throw new Error("Choose a username with 3–30 letters, numbers, dots, underscores or hyphens; it must start with a letter or number.");
         }
@@ -431,7 +441,7 @@
         await clerk.client.signIn.authenticateWithRedirect({
           strategy,
           redirectUrl: callback,
-          redirectUrlComplete: new URL("dashboard.html", location.href).href,
+          redirectUrlComplete: callback,
         });
       },
       async startPasswordReset(email) {
@@ -440,6 +450,9 @@
         await clerk.client.signIn.prepareFirstFactor({ strategy: "reset_password_email_code" });
       },
       async finishPasswordReset(code, password) {
+        if (password.length < 8 || password.length > 30 || !NEW_PASSWORD_PATTERN.test(password)) {
+          throw new Error("Password must be 8–30 characters and include an uppercase letter, at least two lowercase letters, a number, and one of these: @ $ # & % * !");
+        }
         const clerk = await getClerk();
         const attempt = await clerk.client.signIn.attemptFirstFactor({
           strategy: "reset_password_email_code",

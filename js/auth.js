@@ -7,13 +7,20 @@
     if (label) b.querySelector("span").firstChild.textContent = label + " ";
   };
   const msg = (form, text, ok) => { const m = form.querySelector(".form-msg"); m.textContent = text || ""; m.classList.toggle("ok", !!ok); };
+  const passwordPolicyMessage = "Password must be 8–30 characters and include an uppercase letter, at least two lowercase letters, a number, and one of these: @ $ # & % * !";
+  const isValidNewPassword = (password) =>
+    password.length >= 8 &&
+    password.length <= 30 &&
+    /^(?=.*[A-Z])(?=(?:.*[a-z]){2})(?=.*\d)(?=.*[@$#&%*!]).*$/.test(password);
   const invalid = (form) => {
     const bad = [...form.querySelectorAll("input[required]")].find((i) => !i.checkValidity());
     form.querySelectorAll(".field input").forEach((i) => i.removeAttribute("aria-invalid"));
     if (!bad) return null;
     bad.setAttribute("aria-invalid", "true"); bad.focus();
     if (bad.type === "email") return "Enter a valid email address.";
-    if (bad.type === "password") return "Password needs at least 8 characters.";
+    if (bad.type === "password") {
+      return bad.autocomplete === "new-password" ? passwordPolicyMessage : "Enter your password.";
+    }
     if (bad.type === "checkbox") return "Please tick the box to continue.";
     if (bad.type === "radio") return "Choose your main interest.";
     if (bad.name === "username") return "Choose a username using 3–30 letters, numbers, dots, underscores or hyphens.";
@@ -59,7 +66,7 @@
         resetFields.className = "field";
         resetFields.innerHTML = `
           <label class="field"><span>Email verification code</span><input name="reset-code" inputmode="numeric" autocomplete="one-time-code" required /></label>
-          <label class="field"><span>New password</span><input name="reset-password" type="password" autocomplete="new-password" minlength="8" required /></label>`;
+          <label class="field"><span>New password</span><input name="reset-password" type="password" autocomplete="new-password" minlength="8" maxlength="30" required /></label>`;
         signin.insertBefore(resetFields, signin.querySelector(".form-msg"));
         resetting = true;
         forgot.textContent = "Set new password";
@@ -69,8 +76,8 @@
 
       const code = resetFields.querySelector('[name="reset-code"]').value.trim();
       const password = resetFields.querySelector('[name="reset-password"]').value;
-      if (!code || password.length < 8) {
-        msg(signin, "Enter the email code and a new password with at least 8 characters.");
+      if (!code || !isValidNewPassword(password)) {
+        msg(signin, !code ? "Enter the email verification code." : passwordPolicyMessage);
         return;
       }
       await MNM_API.auth.finishPasswordReset(code, password);

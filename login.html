@@ -68,7 +68,8 @@
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required placeholder="you@school.org" /></label>
           <label class="field"><span>Username</span><input type="text" name="username" autocomplete="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9][A-Za-z0-9._-]*" required placeholder="Choose a username" /></label>
           <label class="field"><span>Password</span>
-            <span class="pw"><input type="password" name="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters" /><button type="button" class="pw-toggle" aria-label="Show password">Show</button></span></label>
+            <span class="pw"><input type="password" name="password" autocomplete="new-password" required minlength="8" maxlength="30" pattern="(?=.*[A-Z])(?=(?:.*[a-z]){2})(?=.*[0-9])(?=.*[@$#&%*!]).*" placeholder="8–30 characters; meet all requirements" /><button type="button" class="pw-toggle" aria-label="Show password">Show</button></span></label>
+          <p class="muted">For email sign-up only: use 8–30 characters, including an uppercase letter, two lowercase letters, a number, and one of: @ $ # &amp; % * !. Google/Discord sign-up doesn’t require a password.</p>
           <fieldset class="field">
             <legend>Main interest</legend>
             <div class="picks">
