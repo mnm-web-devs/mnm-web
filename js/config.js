@@ -16,5 +16,5 @@ window.MNM_CONFIG = {
   apiBaseUrl: runtimeEnv.MNM_API_BASE_URL || runtimeEnv.API_BASE_URL || "https://mnm-web-ochre.vercel.app/api/v1",
   clerkPublishableKey: runtimeEnv.MNM_CLERK_PUBLISHABLE_KEY ||
     runtimeEnv.CLERK_PUBLISHABLE_KEY ||
-    "pk_test_YWxlcnQtZG9nLTQyMzEuY2xlcmsuYWNjb3VudHMuZGV2JA",
+    "pk_live_Y2xlcmsubW5tc3RlbS5zdHVkeSQ",
 };
