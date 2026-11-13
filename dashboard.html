@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/friendly.css" />
   <link rel="stylesheet" href="css/app.css" />
+  <link rel="stylesheet" href="css/profile.css" />
 </head>
 <body class="app" data-role="student">
   <a class="skip" href="#main">Skip to content</a>
@@ -106,18 +107,45 @@
 
     <!-- SETTINGS -->
     <section class="view" id="settings" tabindex="-1" hidden>
-      <article class="panel-card narrow">
-        <header><h3>Profile</h3></header>
-        <form class="form" id="profile-form">
-          <label class="field"><span>Name</span><input name="name" data-user-value="name" /></label>
-          <label class="field"><span>Username</span><input name="username" autocomplete="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9][A-Za-z0-9._-]*" required /></label>
-          <label class="field"><span>Email</span><input name="email" type="email" data-user-value="email" disabled /></label>
-          <label class="field"><span>Main interest</span>
-            <select name="track"><option value="neuro">Neuroscience</option><option value="med">Medicine</option><option value="math">Mathematics</option><option value="all">All STEM interests</option></select></label>
-          <label class="check"><input type="checkbox" checked /><span>Email me about new workshops and challenges</span></label>
-          <div class="row-end"><button class="btn btn-sm" type="submit"><span>Save changes</span></button></div>
-        </form>
-      </article>
+      <div class="profile-wrap">
+        <article class="profile-hero" id="profile-hero" aria-label="Your MNM profile">
+          <div class="ph-banner" aria-hidden="true"><span class="ph-glyph g1">π</span><span class="ph-glyph g2">◉</span><span class="ph-glyph g3">✚</span></div>
+          <div class="ph-body">
+            <div class="ph-avatar" id="ph-avatar"><span data-user-initials></span></div>
+            <div class="ph-id">
+              <h2 class="ph-name" data-user-name></h2>
+              <p class="ph-handle" id="ph-handle"></p>
+              <ul class="ph-titles" id="ph-titles" aria-label="Your roles in MNM"></ul>
+            </div>
+          </div>
+          <p class="ph-bio" id="ph-bio"></p>
+          <ul class="ph-meta" id="ph-meta"></ul>
+          <div class="ph-stats" id="ph-stats"></div>
+        </article>
+
+        <article class="panel-card">
+          <header><h3>Edit profile</h3><span class="muted small">Titles are given by the MNM team.</span></header>
+          <form class="form" id="profile-form">
+            <div class="form-2">
+              <label class="field"><span>Name</span><input name="name" data-user-value="name" autocomplete="name" /></label>
+              <label class="field"><span>Username</span><input name="username" autocomplete="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9][A-Za-z0-9._-]*" required /></label>
+            </div>
+            <label class="field"><span>Bio <small class="muted" id="bio-count">0/160</small></span><textarea name="bio" rows="3" maxlength="160" placeholder="A line about you: what you love, what you're working on."></textarea></label>
+            <div class="form-2">
+              <label class="field"><span>School or university</span><input name="school" maxlength="80" autocomplete="organization" /></label>
+              <label class="field"><span>Grade / year</span><input name="grade" maxlength="30" placeholder="e.g. 11th grade" /></label>
+            </div>
+            <div class="form-2">
+              <label class="field"><span>Location</span><input name="location" maxlength="60" placeholder="City, country" /></label>
+              <label class="field"><span>Main interest</span>
+                <select name="track"><option value="neuro">Neuroscience</option><option value="med">Medicine</option><option value="math">Mathematics</option><option value="all">All STEM interests</option></select></label>
+            </div>
+            <label class="field"><span>Email</span><input name="email" type="email" data-user-value="email" disabled /></label>
+            <label class="check"><input type="checkbox" checked /><span>Email me about new workshops and challenges</span></label>
+            <div class="row-end"><button class="btn btn-sm" type="submit"><span>Save changes</span></button></div>
+          </form>
+        </article>
+      </div>
     </section>
   </div>
 
