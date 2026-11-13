@@ -4,7 +4,7 @@
    ============================================================ */
 window.MNM_LINKS = {
   discord: "https://discord.gg/FJd4udkpwB", // Discord invite, e.g. "https://discord.gg/xxxxxxx"
-  apply: "mailto:medineuromatics@gmail.com?subject=MNM%20staff%20application&body=Hi MNM team,%0D%0A%0D%0AName:%0D%0AAge %26 country:%0D%0ATeam I want to join (Programs %26 Curriculum / Web %26 Tech / Media %26 Content / Design %26 Brand / Partnerships / Volunteering):%0D%0AWhat I can do (skills, links to work):%0D%0AHours per week I can give:%0D%0ADiscord username:%0D%0A%0D%0AThanks!",   // staff application: replace with a Google Form link when the team has one
+  apply: "https://docs.google.com/forms/d/e/1FAIpQLScGOz2cKXUYoh2U9NuhZ2awmLT_LPt4w3IvUgXdEfve_6loow/viewform",   // staff application form (Google Form, responses go to "MNM Staff Applications (responses)" sheet)
   partner: "", // external partnership form (optional; the site already has sponsor.html#contact)
   formEndpoint: "", // backend URL for site forms, e.g. "https://api.mnmstem.study/forms" (empty = demo mode, see js/forms.js)
   email: "mailto:medineuromatics@gmail.com", // contact email
