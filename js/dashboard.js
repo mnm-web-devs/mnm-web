@@ -19,6 +19,10 @@
   profileForm.elements.namedItem("email").value = profile.email || user.email;
   profileForm.elements.namedItem("track").value = profile.track || "";
   profileForm.querySelector('input[type="checkbox"]').checked = profile.emailWorkshopUpdates;
+  for (const key of ["bio", "school", "grade", "location"]) {
+    const input = profileForm.elements.namedItem(key);
+    if (input) input.value = profile[key] || "";
+  }
   if (!profile.track) {
     const trackSelect = profileForm.elements.namedItem("track");
     const choose = document.createElement("option");
@@ -34,6 +38,44 @@
     });
   }
 
+
+  /* profile card: avatar, MNM titles, bio, meta, stats */
+  const TITLE_ICON = { director: "★", lead: "◆", staff: "●", mentor: "✦", admin: "⚑", member: "○" };
+  const titleKind = (t) => {
+    const x = t.toLowerCase();
+    if (x.includes("director") || x.includes("founder") || x.includes("president")) return "director";
+    if (x.includes("lead") || x.includes("head") || x.includes("chief")) return "lead";
+    if (x.includes("mentor") || x.includes("teacher")) return "mentor";
+    if (x.includes("admin")) return "admin";
+    if (x.includes("member")) return "member";
+    return "staff";
+  };
+  const TRACK_NAME = { neuro: "Neuroscience", med: "Medicine", math: "Mathematics", all: "All STEM interests" };
+  function renderProfileHero() {
+    const byUsername = (window.MNM_TITLES || {})[(profile.username || "").toLowerCase()];
+    const titles = user.titles?.length ? user.titles : byUsername?.length ? byUsername : [user.role === "admin" ? "Admin" : "Member"];
+    $("#ph-titles").innerHTML = titles
+      .map((t) => { const k = titleKind(t); return `<li class="ph-title ${k}"><i aria-hidden="true">${TITLE_ICON[k]}</i>${esc(t)}</li>`; })
+      .join("");
+    $("#ph-handle").textContent = profile.username ? "@" + profile.username : "Pick a username below";
+    $("#ph-bio").textContent = profile.bio || "";
+    const meta = [];
+    const trackKey = profileForm.elements.namedItem("track").value;
+    if (TRACK_NAME[trackKey]) meta.push(["🧭", TRACK_NAME[trackKey]]);
+    if (profile.school) meta.push(["🎓", [profile.school, profile.grade].filter(Boolean).join(" · ")]);
+    else if (profile.grade) meta.push(["🎓", profile.grade]);
+    if (profile.location) meta.push(["📍", profile.location]);
+    if (user.joinedAt) meta.push(["🗓", "Joined " + fmtDate(new Date(user.joinedAt), { month: "short", year: "numeric" })]);
+    $("#ph-meta").innerHTML = meta.map(([i, t]) => `<li><span aria-hidden="true">${i}</span>${esc(t)}</li>`).join("");
+    if (user.avatarUrl) {
+      const img = document.createElement("img");
+      img.src = user.avatarUrl; img.alt = ""; img.referrerPolicy = "no-referrer";
+      img.onerror = () => img.remove();
+      const slot = $("#ph-avatar"); slot.querySelector("span").hidden = true; slot.prepend(img);
+    }
+  }
+  renderProfileHero();
+
   /* stats + level ring */
   $("#stats").innerHTML = [
     ["XP", ov.xp.toLocaleString(), `Level ${ov.level}`],
@@ -41,6 +83,9 @@
     ["Workshops attended", ov.attended ?? 0, "Recorded attendance"],
     ["Leaderboard", "#" + ov.rank, "of " + ov.of + " students"],
   ].map(([k, v, s]) => `<div class="stat"><small>${k}</small><b>${v}</b><span>${s}</span></div>`).join("");
+  $("#ph-stats").innerHTML = [
+    [`${ov.level}`, "Level"], [ov.xp.toLocaleString(), "XP"], [`${ov.streak}`, "🔥 Streak"], [`#${ov.rank}`, "Leaderboard"],
+  ].map(([v, k]) => `<div class="ph-stat"><b>${v}</b><small>${k}</small></div>`).join("");
   const ring = $("#level-ring .fill"), C = 2 * Math.PI * 52;
   const levelProgress = ((ov.xp % 200) / 200);
   ring.style.strokeDasharray = C;
@@ -160,6 +205,9 @@
   $("#ov-news").innerHTML = news.map((n) => `<li><span class="grow"><b>${esc(n.title)}</b><small>${esc(n.body)}</small></span><time>${MNM_UI.ago(n.at)}</time></li>`).join("");
 
   /* profile */
+  const bio = profileForm.elements.namedItem("bio");
+  const bioCount = () => ($("#bio-count").textContent = `${bio.value.length}/160`);
+  bio.addEventListener("input", bioCount); bioCount();
   profileForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const submit = profileForm.querySelector('button[type="submit"]');
@@ -184,7 +232,22 @@
       });
       profile.username = savedProfile.username;
       profileForm.elements.namedItem("username").value = savedProfile.username;
+      const extras = {};
+      for (const key of ["bio", "school", "grade", "location"]) {
+        const v = profileForm.elements.namedItem(key).value.trim();
+        if (v !== (profile[key] || "")) extras[key] = v;
+      }
+      if (Object.keys(extras).length) {
+        try {
+          await API.updateProfile(extras);
+          Object.assign(profile, extras);
+        } catch (extraError) {
+          toast("Saved, but bio/school/location could not be saved: " + extraError.message, "err");
+        }
+      }
+      renderProfileHero();
       toast("Profile saved.");
+      submit.disabled = false;
       const needsReload = !profile.track;
       profile.track = profileForm.elements.namedItem("track").value;
       if (location.hash === "#settings" && needsReload) location.reload();

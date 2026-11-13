@@ -87,7 +87,17 @@
       email,
       role: "student",
       track: user.publicMetadata?.primary_track || user.unsafeMetadata?.primary_track || null,
+      // MNM titles shown on the profile ("Director", "Design Lead", ...). Set by an admin in Clerk:
+      // Users → user → Metadata → Public: { "mnm_titles": ["Director", "Tech Lead", "Staff"] }
+      titles: normalizeTitles(user.publicMetadata?.mnm_titles ?? user.publicMetadata?.titles),
+      avatarUrl: user.hasImage ? user.imageUrl : null,
+      joinedAt: user.createdAt || null,
     };
+  }
+
+  function normalizeTitles(value) {
+    const list = Array.isArray(value) ? value : typeof value === "string" ? value.split(/[,/]/) : [];
+    return [...new Set(list.map((t) => String(t).trim()).filter(Boolean))].slice(0, 8);
   }
 
   function getOAuthCallbackUrls() {
