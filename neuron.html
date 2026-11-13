@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="css/fonts.css" />
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://mnmstem.study/"}, {"@type": "ListItem", "position": 2, "name": "Neuron Lab", "item": "https://mnmstem.study/neuron.html"}]}</script>
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/friendly.css" />
 </head>
 <body data-page="neuron" data-seq="0,4">
   <canvas id="gl" aria-hidden="true"></canvas>
@@ -42,6 +43,14 @@
       <h1 class="split">Fire a <span class="grad">real neuron</span></h1>
       <p class="lead fade-up">This neuron runs on the Hodgkin–Huxley equations, the Nobel Prize-winning model of how nerve cells send signals. Give it a push and watch an action potential happen, slowed down from 2 milliseconds.</p>
     </section>
+    <section class="wrap">
+      <div class="lab-howto">
+        <div class="howto-step"><span>1</span><p><b>Press ⚡ Stimulate</b> (or Space, or click the cell) to send a small electric pulse into the neuron.</p></div>
+        <div class="howto-step"><span>2</span><p><b>Watch the graph:</b> if the voltage crosses the dashed line at −55 mV, the neuron fires a spike.</p></div>
+        <div class="howto-step"><span>3</span><p><b>Change one thing</b> on the right (strength, myelin, toxins) and fire again. Or try the six experiments below.</p></div>
+      </div>
+    </section>
+
 
     <section class="wrap">
       <div class="lab" id="nl-lab">
@@ -70,6 +79,25 @@
           <button class="ghost-btn" type="button" id="nl-reset">Reset</button>
         </aside>
       </div>
+        <div class="lab-legend" aria-label="What you see">
+          <span><i style="background:#5082ff"></i>Cell body: blue at rest, bright when excited</span>
+          <span><i style="background:var(--mint)"></i>Axon: the signal travels along it</span>
+          <span><i style="background:#c9d6f2"></i>Myelin: insulation that speeds the signal</span>
+          <span><i class="dash"></i>Graph: voltage over time, dashed line = threshold</span>
+        </div>
+    </section>
+
+    <section class="wrap section">
+      <p class="eyebrow">The science in 60 seconds</p>
+      <h2>What is an action potential?</h2>
+      <div class="ap-steps">
+        <div class="learn-card" style="--c:#5082ff"><h3>1 · Resting</h3><p>A neuron keeps its inside about −65 mV more negative than the outside, like a charged battery.</p></div>
+        <div class="learn-card" style="--c:var(--mint)"><h3>2 · Threshold</h3><p>A strong enough input pushes the voltage past about −55 mV. Below that, nothing happens: it is all or nothing.</p></div>
+        <div class="learn-card" style="--c:var(--teal-hi)"><h3>3 · Rising (Na⁺ in)</h3><p>Sodium channels open, Na⁺ rushes in and the voltage shoots up to about +40 mV in less than a millisecond.</p></div>
+        <div class="learn-card" style="--c:var(--purple-hi)"><h3>4 · Falling (K⁺ out)</h3><p>Sodium channels close and potassium channels open. K⁺ flows out and the voltage drops, even a little below rest.</p></div>
+        <div class="learn-card" style="--c:#ffd27a"><h3>5 · Refractory</h3><p>For a few milliseconds the neuron can't fire again. That is why signals travel in one direction along the axon.</p></div>
+      </div>
+      <p class="note"><b>Words to know:</b> <i>membrane potential</i> = voltage across the cell membrane · <i>ion channel</i> = a protein gate that lets one kind of ion through · <i>axon</i> = the long cable that carries the signal · <i>myelin</i> = fatty insulation around the axon.</p>
     </section>
 
     <section class="wrap section">

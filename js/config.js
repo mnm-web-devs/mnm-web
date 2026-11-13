@@ -4,7 +4,7 @@
    ============================================================ */
 window.MNM_LINKS = {
   discord: "https://discord.gg/FJd4udkpwB", // Discord invite, e.g. "https://discord.gg/xxxxxxx"
-  apply: "",   // staff application form, e.g. a Google Form link
+  apply: "https://docs.google.com/forms/d/e/1FAIpQLScGOz2cKXUYoh2U9NuhZ2awmLT_LPt4w3IvUgXdEfve_6loow/viewform",   // staff application form (Google Form, responses go to "MNM Staff Applications (responses)" sheet)
   partner: "", // external partnership form (optional; the site already has sponsor.html#contact)
   formEndpoint: "", // backend URL for site forms, e.g. "https://api.mnmstem.study/forms" (empty = demo mode, see js/forms.js)
   email: "mailto:medineuromatics@gmail.com", // contact email

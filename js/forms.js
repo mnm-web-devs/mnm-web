@@ -19,6 +19,10 @@
       if (!r.ok) throw new Error("Something went wrong. Please try again or email us.");
       return;
     }
+    // No backend yet: open the visitor's email app with everything filled in, so the message really reaches the team.
+    const lines = Object.entries(fields).filter(([, v]) => v !== "" && v !== false).map(([k, v]) => `${k}: ${v === true ? "yes" : v}`);
+    const subject = `MNM website: ${kind.replace(/-/g, " ")}`;
+    location.href = `mailto:medineuromatics@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n") + "\n\nSent from " + location.href)}`;
     await new Promise((r) => setTimeout(r, 500));
     try { const all = JSON.parse(localStorage.getItem(KEY) || "[]"); all.push(payload); localStorage.setItem(KEY, JSON.stringify(all)); } catch {}
   }

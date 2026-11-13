@@ -122,7 +122,12 @@
   const heroFades = document.querySelectorAll(".hero .fade-up, .page-hero .fade-up");
   if (heroWords.length) gsap.set(heroWords, { yPercent: 110 });
   if (heroFades.length) gsap.set(heroFades, { y: 24, opacity: 0 });
-  const intro = document.querySelector(".intro");
+  let intro = document.querySelector(".intro");
+  // friendlier: show the intro curtain only on the first visit of a session
+  try {
+    if (intro && sessionStorage.getItem("mnm-intro-seen")) { intro.remove(); intro = null; }
+    else sessionStorage.setItem("mnm-intro-seen", "1");
+  } catch (e) { /* storage blocked: keep the intro */ }
   const tl = gsap.timeline({ paused: true });
   if (intro) {
     tl.from(".intro-word span", { yPercent: 120, stagger: 0.08, duration: 0.7, ease: "power4.out" })
@@ -291,7 +296,7 @@
   });
 
   /* ---------- custom cursor ---------- */
-  const cur = document.querySelector(".cursor");
+  const cur = null; // custom cursor disabled: the normal pointer is easier to use
   if (cur) {
     const cx = gsap.quickTo(cur, "x", { duration: 0.35, ease: "power3" });
     const cy = gsap.quickTo(cur, "y", { duration: 0.35, ease: "power3" });
