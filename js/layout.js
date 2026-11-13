@@ -9,6 +9,20 @@
   ];
   const lab = ["neuron.html", "Neuron Lab", "Fire a real neuron, interactive", "#ffd27a", "⚡"];
 
+  /* Signed in? Clerk keeps a readable "__client_uat" cookie (non-zero when a session exists);
+     admins use a session-storage token. The name comes from a small cache the dashboard writes. */
+  const me = (() => {
+    try {
+      const uat = document.cookie.match(/(?:^|; )__client_uat=([^;]*)/);
+      const signed = (uat && uat[1] && uat[1] !== "0") || !!sessionStorage.getItem("mnm-admin-session");
+      if (!signed) return null;
+      const cached = JSON.parse(localStorage.getItem("mnm-me") || "null") || {};
+      return { name: cached.name || "", initials: cached.initials || "", avatar: cached.avatar || "" };
+    } catch { return null; }
+  })();
+  const escTxt = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const meChip = me ? `<a class="me-chip" href="dashboard.html" title="My dashboard">${me.avatar ? `<img src="${escTxt(me.avatar)}" alt="" referrerpolicy="no-referrer" />` : `<span>${escTxt(me.initials || "★")}</span>`}<b>${escTxt(me.name ? me.name.split(" ")[0] : "My dashboard")}</b></a>` : "";
+
   const header = document.getElementById("site-header");
   if (header) {
     header.outerHTML = `
@@ -27,8 +41,8 @@
       <a href="workshops.html"${is("workshops.html")}>Workshops</a>
       <a href="hub.html"${is("hub.html")}>Opportunities</a>
       <a href="about.html"${is("about.html")}>About</a>
-      <a href="login.html"${is("login.html")}>Sign in</a>
-      <a class="btn btn-sm magnetic" href="join.html"${is("join.html")}><span>Join MNM</span></a>
+      ${me ? `<a class="btn btn-sm magnetic" href="dashboard.html"><span>Dashboard</span></a>${meChip}` : `<a href="login.html"${is("login.html")}>Sign in</a>
+      <a class="btn btn-sm magnetic" href="join.html"${is("join.html")}><span>Join MNM</span></a>`}
     </nav>
     <button class="burger" type="button" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button>
   </header>
@@ -39,8 +53,8 @@
     <a href="workshops.html">Workshops</a>
     <a href="hub.html">Opportunities</a>
     <a href="about.html">About</a>
-    <a href="login.html">Sign in</a>
-    <a class="btn" href="join.html"><span>Join MNM →</span></a>
+    ${me ? `<a class="btn" href="dashboard.html"><span>My dashboard →</span></a>` : `<a href="login.html">Sign in</a>
+    <a class="btn" href="join.html"><span>Join MNM →</span></a>`}
   </div>`;
   }
 
