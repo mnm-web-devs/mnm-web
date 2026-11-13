@@ -32,3 +32,54 @@
 /* slightly larger, easier-to-read body text */
 .lead { color: #b7c6de; }
 .track-card p, .team p, .do-card p { color: #b7c6de; }
+
+/* ---------- Week 3: shared bits ---------- */
+.linkish { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; }
+#hub-reset { margin: 10px 0 0; display: inline-block; }
+
+/* mission (home) */
+.mission h2 { max-width: 22em; }
+.mission-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
+.mission-links a { text-decoration: none; padding: 22px 24px; border-radius: 20px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-top: 3px solid var(--c); transition: transform .3s var(--ease); }
+.mission-links a:hover { transform: translateY(-3px); }
+.mission-links b { display: block; font: 700 1.15rem/1.2 var(--head); color: var(--c); margin-bottom: 6px; }
+.mission-links span { color: #b7c6de; }
+
+/* tracks */
+.track-intro { display: grid; grid-template-columns: 1.6fr 1fr; gap: 28px; align-items: start; }
+.learn-grid, .ap-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 26px; }
+.ap-steps { grid-template-columns: repeat(5, 1fr); }
+.learn-card { padding: 22px; border-radius: 20px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-top: 3px solid var(--c); }
+.learn-card h3 { font-size: 1.1rem; color: var(--c); }
+.learn-card p { color: #b7c6de; margin: 0; font-size: .97rem; }
+
+/* neuron lab */
+.lab-howto { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+.howto-step { display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+.howto-step span { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--grad); font: 700 1rem var(--head); color: #fff; }
+.howto-step p { margin: 0; color: #c9d6f2; font-size: .95rem; }
+.lab-legend { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 16px; color: #b7c6de; font-size: .9rem; }
+.lab-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; }
+.lab-legend i.dash { width: 18px; height: 0; border-top: 2px dashed #ffd27a; border-radius: 0; vertical-align: 3px; }
+
+/* join */
+.next-box { margin-top: 22px; padding: 22px 26px; border-radius: 20px; background: rgba(48,195,156,.07); border: 1px solid rgba(48,195,156,.3); }
+.next-list { margin: 0; padding-left: 20px; color: #c9d6f2; }
+.next-list li { margin: 6px 0; }
+
+/* ---------- mobile fixes ---------- */
+@media (max-width: 900px) {
+  .track-intro { grid-template-columns: 1fr; }
+  .learn-grid { grid-template-columns: repeat(2, 1fr); }
+  .ap-steps { grid-template-columns: repeat(2, 1fr); }
+  .mission-links { grid-template-columns: 1fr; }
+  .lab-howto { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .learn-grid, .ap-steps { grid-template-columns: 1fr; }
+  .hub-row { flex-direction: column; align-items: stretch; }
+  .hub-row .search, .hub-row .select { width: 100%; flex: 0 0 auto; }
+  .chips { flex-wrap: wrap; }
+  .badges li { font-size: .88rem; padding: 8px 12px; }
+  h1 { overflow-wrap: anywhere; }
+}

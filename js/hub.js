@@ -25,6 +25,10 @@
 
   const params = new URLSearchParams(location.search);
   let cat = params.get("cat") || "all";
+  const fmt = document.getElementById("fmt"), lvl = document.getElementById("lvl");
+  const isOnline = (d) => /online/i.test(d.where || "");
+  const levelOf = (d) => { const l = (d.level || "").toLowerCase();
+    return { ms: /middle|all/.test(l), hs: /high|all|13–18|ages/.test(l), uni: /university|advanced|\+|all/.test(l) }; };
 
   const n = (c) => (c === "all" ? data.length : c === "featured" ? data.filter((d) => d.featured).length : data.filter((d) => d.cat === c).length);
   chips.innerHTML = CATS.map(([k, t]) => `<button class="chip${k === cat ? " on" : ""}" type="button" data-cat="${k}" aria-pressed="${k === cat}">${t} <em>${n(k)}</em></button>`).join("");
@@ -38,7 +42,9 @@
     const term = q.value.trim().toLowerCase();
     let items = data.filter((d) =>
       (cat === "all" || (cat === "featured" ? d.featured : d.cat === cat)) &&
-      (!term || (d.name + " " + d.desc + " " + d.type + " " + d.where).toLowerCase().includes(term))
+      (!term || (d.name + " " + d.desc + " " + d.type + " " + d.where + " " + (d.level || "")).toLowerCase().includes(term)) &&
+      (!fmt || fmt.value === "any" || (fmt.value === "online" ? isOnline(d) : !isOnline(d))) &&
+      (!lvl || lvl.value === "any" || levelOf(d)[lvl.value])
     );
     if (sort.value === "alpha") items = [...items].sort((a, b) => a.name.localeCompare(b.name));
     else items = [...items].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
@@ -55,7 +61,7 @@
           <a href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener noreferrer">Official site ↗</a>
         </div>
       </article>`).join("")
-      : `<p class="empty">Nothing found. Try another word or category.</p>`;
+      : `<p class="empty">Nothing found. Try another word, or <button type="button" class="text-link linkish" onclick="document.getElementById('hub-reset').click()">reset the filters</button>.</p>`;
 
     if (window.gsap && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
       gsap.fromTo(list.children, { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.035, ease: "power3.out", overwrite: true });
@@ -88,5 +94,11 @@
   });
   let t; q.addEventListener("input", () => { clearTimeout(t); t = setTimeout(render, 120); });
   sort.addEventListener("change", render);
+  fmt && fmt.addEventListener("change", render);
+  lvl && lvl.addEventListener("change", render);
+  document.getElementById("hub-reset")?.addEventListener("click", () => {
+    q.value = ""; if (fmt) fmt.value = "any"; if (lvl) lvl.value = "any"; sort.value = "featured";
+    chips.querySelector('[data-cat="all"]')?.click();
+  });
   render();
 })();
