@@ -83,3 +83,9 @@
   .badges li { font-size: .88rem; padding: 8px 12px; }
   h1 { overflow-wrap: anywhere; }
 }
+
+/* signed-in chip in the header */
+.me-chip { display: inline-flex; align-items: center; gap: 8px; margin-left: 6px; padding: 4px 12px 4px 4px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--text); text-decoration: none; font: 600 .9rem var(--head); }
+.me-chip:hover { border-color: var(--mint); }
+.me-chip span, .me-chip img { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; object-fit: cover; background: var(--grad); color: #fff; font: 700 .72rem var(--head); }
+@media (max-width: 1100px) { .me-chip b { display: none; } .me-chip { padding-right: 4px; } }

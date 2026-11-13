@@ -30,6 +30,7 @@ window.MNM_UI_READY = (async () => {
   $$("[data-user-email]").forEach((el) => (el.textContent = user.email));
   $$("[data-user-initials]").forEach((el) => (el.textContent = initials(user.name)));
   if (user.role === "admin") $$("[data-admin-only]").forEach((el) => (el.hidden = false));
+  try { localStorage.setItem("mnm-me", JSON.stringify({ name: user.name, initials: initials(user.name), avatar: user.avatarUrl || "" })); } catch {}
 
   /* sections (#hash routing) */
   const links = $$(".side-nav a[href^='#']");
@@ -52,7 +53,7 @@ window.MNM_UI_READY = (async () => {
   addEventListener("keydown", (e) => e.key === "Escape" && document.body.classList.remove("drawer-open"));
 
   /* sign out */
-  $$("[data-signout]").forEach((b) => b.addEventListener("click", async () => { await MNM_API.auth.signOut(); location.href = "login.html"; }));
+  $$("[data-signout]").forEach((b) => b.addEventListener("click", async () => { await MNM_API.auth.signOut(); try { localStorage.removeItem("mnm-me"); } catch {} location.href = "login.html"; }));
 
   /* toast */
   const toastBox = document.createElement("div");
