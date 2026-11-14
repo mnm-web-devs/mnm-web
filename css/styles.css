@@ -135,10 +135,17 @@ code { font-family: ui-monospace, monospace; background: rgba(255,255,255,.08); 
 .menu-open .burger i:last-child { top: 21px; transform: rotate(-45deg); }
 .mobile-menu {
   position: fixed; inset: 0; z-index: 15; display: flex; flex-direction: column; justify-content: center; gap: 6px;
-  padding: 90px 28px 40px; background: rgba(5, 15, 34, .96); backdrop-filter: blur(16px);
+  overflow-y: auto; padding: 90px 28px 40px; background: rgba(5, 15, 34, .96); backdrop-filter: blur(16px);
   clip-path: circle(0% at calc(100% - 40px) 40px); transition: clip-path .7s var(--ease); visibility: hidden;
 }
 .mobile-menu a:not(.btn) { font: 700 2.1rem/1.25 var(--head); text-decoration: none; color: var(--c, #fff); letter-spacing: -.02em; }
+.mobile-group { display: grid; gap: 4px; }
+.mobile-group-btn { display: flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; color: #fff; font: 700 2.1rem/1.25 var(--head); text-align: left; letter-spacing: -.02em; cursor: pointer; }
+.mobile-group-btn svg { width: 18px; height: 18px; transition: transform .2s; }
+.mobile-group-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.mobile-submenu { display: grid; gap: 4px; padding-left: 18px; }
+.mobile-submenu[hidden] { display: none; }
+.mobile-submenu a:not(.btn) { font-size: 1.55rem; }
 .mobile-menu .btn { margin-top: 24px; align-self: flex-start; }
 .menu-open .mobile-menu { clip-path: circle(150% at calc(100% - 40px) 40px); visibility: visible; }
 .menu-open { overflow: hidden; }

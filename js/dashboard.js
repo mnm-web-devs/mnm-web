@@ -1,4 +1,21 @@
 /* MNM — student dashboard. Reads MNM_API.student (js/api.js). */
+const dashboardLoading = document.getElementById("dashboard-loading");
+const setDashboardReady = () => {
+  dashboardLoading.hidden = true;
+  document.body.removeAttribute("aria-busy");
+  [document.querySelector(".skip"), document.querySelector(".side"), document.getElementById("main")].forEach((region) => {
+    region.inert = false;
+    region.removeAttribute("aria-hidden");
+  });
+};
+const showDashboardError = (error) => {
+  document.getElementById("dashboard-loading-status").hidden = true;
+  document.getElementById("dashboard-loading-error").hidden = false;
+  document.getElementById("dashboard-loading-message").textContent =
+    error?.message || "We couldn't load your dashboard. Please try again.";
+  document.getElementById("dashboard-retry").addEventListener("click", () => location.reload(), { once: true });
+};
+
 (async () => {
   await window.MNM_UI_READY;
   if (!window.MNM_UI) return;
@@ -67,14 +84,52 @@
     if (profile.location) meta.push(["📍", profile.location]);
     if (user.joinedAt) meta.push(["🗓", "Joined " + fmtDate(new Date(user.joinedAt), { month: "short", year: "numeric" })]);
     $("#ph-meta").innerHTML = meta.map(([i, t]) => `<li><span aria-hidden="true">${i}</span>${esc(t)}</li>`).join("");
-    if (user.avatarUrl) {
-      const img = document.createElement("img");
-      img.src = user.avatarUrl; img.alt = ""; img.referrerPolicy = "no-referrer";
-      img.onerror = () => img.remove();
-      const slot = $("#ph-avatar"); slot.querySelector("span").hidden = true; slot.prepend(img);
+    const slot = $("#ph-avatar");
+    const initials = slot.querySelector("span");
+    const existingImage = slot.querySelector("img");
+    const avatarUrl = profile.avatarUrl || user.avatarUrl;
+    if (avatarUrl) {
+      const img = existingImage || document.createElement("img");
+      img.src = avatarUrl; img.alt = ""; img.referrerPolicy = "no-referrer";
+      img.onerror = () => { img.remove(); initials.hidden = false; };
+      if (!existingImage) slot.prepend(img);
+      initials.hidden = true;
+    } else {
+      existingImage?.remove();
+      initials.hidden = false;
     }
   }
   renderProfileHero();
+  $("#avatar-edit").addEventListener("click", () => $("#avatar-file").click());
+  $("#avatar-file").addEventListener("change", async (event) => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      toast("Choose a PNG, JPEG, or WebP image.", "err");
+      input.value = "";
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast("Avatar must be no larger than 2 MB.", "err");
+      input.value = "";
+      return;
+    }
+    const button = $("#avatar-edit");
+    button.disabled = true;
+    toast("Uploading profile photo…");
+    try {
+      const uploaded = await API.uploadAvatar(file);
+      profile.avatarUrl = uploaded.avatarUrl;
+      renderProfileHero();
+      toast("Profile photo updated.");
+    } catch (error) {
+      toast(error.message, "err");
+    } finally {
+      button.disabled = false;
+      input.value = "";
+    }
+  });
 
   /* stats + level ring */
   $("#stats").innerHTML = [
@@ -256,7 +311,8 @@
       submit.disabled = false;
     }
   });
+  setDashboardReady();
 })().catch((error) => {
   console.error("Could not load the student dashboard:", error);
-  window.MNM_UI?.toast(error.message, "err");
+  showDashboardError(error);
 });
