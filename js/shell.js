@@ -15,6 +15,13 @@ window.MNM_UI_READY = (async () => {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  if (MNM_API.isLocalDemo) {
+    const notice = document.createElement("aside");
+    notice.className = "local-demo-notice";
+    notice.setAttribute("role", "status");
+    notice.textContent = "Local demo only — sample data; changes are not saved to MNM.";
+    document.querySelector(".main")?.prepend(notice);
+  }
   const fmtDate = (iso, opt = { day: "numeric", month: "short" }) => new Date(iso).toLocaleDateString("en-GB", opt);
   const fmtTime = (iso) => new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   const ago = (iso) => {

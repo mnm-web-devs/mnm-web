@@ -23,6 +23,18 @@ const showDashboardError = (error) => {
   const API = MNM_API.student;
   const TRACK = { neuro: ["Neuroscience", "var(--purple-hi)", "◉"], med: ["Medicine", "var(--teal-hi)", "✚"], math: ["Mathematics", "var(--mint)", "π"] };
   const pct = (t) => t.total ? Math.round((t.done / t.total) * 100) : 0;
+  const applicationList = $("#applications-list");
+  const applicationStatus = $("#applications-status");
+  const applicationStatusCopy = {
+    submitted: "You have successfully submitted your application. Please wait while our admins pick it up for review.",
+    under_review: "Your application has been picked up by our admins and is under review. Please wait patiently.",
+  };
+  const applicationStatusLabel = {
+    submitted: "Submitted",
+    under_review: "Under Review",
+    approved: "Accepted",
+    rejected: "Rejected",
+  };
 
   MNM_UI.start();
 
@@ -30,6 +42,185 @@ const showDashboardError = (error) => {
     API.overview(), API.tracks(), API.workshops(), API.challenge(), API.announcements(), API.leaderboard(), API.profile(),
   ]);
   let ch = initialChallenge;
+  let applicationLoadPromise;
+  const renderApplications = (applications) => {
+    applicationList.replaceChildren();
+    if (!applications.length) {
+      applicationStatus.textContent = "You haven't submitted any applications yet.";
+      return;
+    }
+    applicationStatus.textContent = "";
+    applications.forEach((application) => {
+      const details = document.createElement("details");
+      details.className = "application-item";
+      const summary = document.createElement("summary");
+      const id = document.createElement("span");
+      id.className = "application-id";
+      id.textContent = application.applicationId;
+      const type = document.createElement("span");
+      type.className = "application-type";
+      type.textContent = ({ staff: "Staff", moderator: "Moderator", lead: "Lead" })[application.type] || "Application";
+      const status = document.createElement("span");
+      status.className = `application-status ${application.status}`;
+      status.textContent = applicationStatusLabel[application.status] || "Status unavailable";
+      summary.append(id, type, status);
+      const message = document.createElement("p");
+      message.className = "application-detail";
+      const displayMessage = applicationStatusCopy[application.status] ||
+        (["approved", "rejected"].includes(application.status)
+          ? application.publicMessage || "No additional message has been added."
+          : "The current status is not available.");
+      message.textContent = displayMessage;
+      details.append(summary, message);
+      applicationList.append(details);
+    });
+  };
+  const loadApplications = async () => {
+    if (applicationLoadPromise) return applicationLoadPromise;
+    applicationStatus.textContent = "Loading your applications…";
+    applicationList.replaceChildren();
+    applicationLoadPromise = API.applications()
+      .then(renderApplications)
+      .catch((error) => {
+        applicationStatus.replaceChildren();
+        applicationStatus.textContent = error.message || "Could not load your applications.";
+        const retry = document.createElement("button");
+        retry.type = "button";
+        retry.className = "text-btn";
+        retry.textContent = "Try again";
+        retry.addEventListener("click", () => {
+          applicationLoadPromise = null;
+          loadApplications();
+        }, { once: true });
+        applicationStatus.append(" ", retry);
+      })
+      .finally(() => { applicationLoadPromise = null; });
+    return applicationLoadPromise;
+  };
+  $$("[data-app-mode]").forEach((button) => button.addEventListener("click", () => {
+    const showStatus = button.dataset.appMode === "status";
+    $$("[data-app-mode]").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+    $("#application-apply-panel").hidden = showStatus;
+    $("#application-status-panel").hidden = !showStatus;
+    if (showStatus) loadApplications();
+  }));
+  $("#applications-refresh").addEventListener("click", () => {
+    applicationLoadPromise = null;
+    loadApplications();
+  });
+  const staffForm = $("#staff-application-form");
+  const staffConfirmation = $("#staff-application-confirmation");
+  const staffNotice = $("#application-role-notice");
+  const staffEligibilityRetry = $("#staff-eligibility-retry");
+  let staffEligibilityRequest = 0;
+  const studyStageOtherField = $("#study-stage-other-field");
+  const teamOtherField = $("#team-other-field");
+  const heardAboutOtherField = $("#heard-about-other-field");
+  const syncOtherFields = () => {
+    const studyOther = staffForm.querySelector('input[name="studyStage"][value="other"]').checked;
+    const teamOther = staffForm.querySelector('input[name="teams"][value="other"]').checked;
+    const heardOther = staffForm.querySelector('input[name="heardAbout"][value="other"]').checked;
+    studyStageOtherField.hidden = !studyOther;
+    studyStageOtherField.querySelector("input").required = studyOther;
+    teamOtherField.hidden = !teamOther;
+    teamOtherField.querySelector("input").required = teamOther;
+    heardAboutOtherField.hidden = !heardOther;
+    heardAboutOtherField.querySelector("input").required = heardOther;
+  };
+  staffForm.addEventListener("change", () => {
+    const teamInputs = [...staffForm.querySelectorAll('input[name="teams"]')];
+    teamInputs[0].setCustomValidity(teamInputs.some((input) => input.checked) ? "" : "Choose at least one team.");
+    syncOtherFields();
+  });
+  staffForm.addEventListener("input", () => { $("#staff-application-message").textContent = ""; });
+  const checkStaffEligibility = async () => {
+    const requestId = ++staffEligibilityRequest;
+    staffForm.hidden = true;
+    staffConfirmation.hidden = true;
+    staffEligibilityRetry.hidden = true;
+    staffNotice.textContent = "Checking your application history…";
+    try {
+      const applications = await API.applications();
+      if (requestId !== staffEligibilityRequest || $("#application-role").value !== "staff") return;
+      const existing = applications.find((application) => application.type === "staff" && application.status !== "rejected");
+      if (existing) {
+        const status = applicationStatusLabel[existing.status] || "in progress";
+        staffNotice.textContent = `You already have a Staff application (${existing.applicationId}) with status ${status}. You may apply again if it is rejected.`;
+        return;
+      }
+      staffNotice.textContent = "Complete the form below to submit your Staff application.";
+      staffForm.hidden = false;
+      staffForm.elements.namedItem("fullName").value = user.name;
+      staffForm.elements.namedItem("email").value = user.email;
+      syncOtherFields();
+    } catch (error) {
+      if (requestId !== staffEligibilityRequest || $("#application-role").value !== "staff") return;
+      staffNotice.textContent = error.message || "Could not check your application history. Please try again.";
+      staffEligibilityRetry.hidden = false;
+    }
+  };
+  $("#application-role").addEventListener("change", (event) => {
+    const role = event.currentTarget.value;
+    staffForm.hidden = true;
+    staffConfirmation.hidden = true;
+    staffEligibilityRetry.hidden = true;
+    if (role === "staff") {
+      checkStaffEligibility();
+      return;
+    }
+    staffEligibilityRequest++;
+    staffNotice.textContent = role === "moderator"
+      ? "Sorry, moderator applications have not started yet."
+      : "Choose a role to continue.";
+  });
+  staffEligibilityRetry.addEventListener("click", checkStaffEligibility);
+  staffForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = $("#staff-application-message");
+    const teamInputs = [...staffForm.querySelectorAll('input[name="teams"]')];
+    const teams = teamInputs.filter((input) => input.checked).map((input) => input.value);
+    teamInputs[0].setCustomValidity(teams.length ? "" : "Choose at least one team.");
+    if (!staffForm.reportValidity()) return;
+
+    const value = (name) => staffForm.elements.namedItem(name).value.trim();
+    const payload = {
+      fullName: value("fullName"),
+      email: value("email"),
+      discordUsername: value("discordUsername"),
+      countryTimeZone: value("countryTimeZone"),
+      studyStage: staffForm.querySelector('input[name="studyStage"]:checked').value,
+      studyStageOther: value("studyStageOther"),
+      schoolName: value("schoolName"),
+      teams,
+      otherTeam: value("otherTeam"),
+      skillsExperience: value("skillsExperience"),
+      portfolioLink: value("portfolioLink"),
+      hoursPerWeek: staffForm.querySelector('input[name="hoursPerWeek"]:checked').value,
+      motivation: value("motivation"),
+      idea: value("idea"),
+      heardAbout: [...staffForm.querySelectorAll('input[name="heardAbout"]:checked')].map((input) => input.value),
+      otherSource: value("otherSource"),
+      consent: staffForm.elements.namedItem("consent").checked,
+    };
+    const submit = staffForm.querySelector('button[type="submit"]');
+    submit.disabled = true;
+    submit.querySelector("span").textContent = "Submitting…";
+    message.textContent = "";
+    try {
+      const result = await API.submitApplication("staff", payload);
+      $("#staff-application-id").textContent = result.applicationId;
+      staffForm.hidden = true;
+      staffConfirmation.hidden = false;
+      staffNotice.textContent = "";
+      applicationLoadPromise = null;
+    } catch (error) {
+      message.textContent = error.message || "Could not submit your application. Please try again.";
+    } finally {
+      submit.disabled = false;
+      submit.querySelector("span").textContent = "Submit application";
+    }
+  });
+  $("#staff-check-status").addEventListener("click", () => $('[data-app-mode="status"]').click());
   const profileForm = $("#profile-form");
   profileForm.elements.namedItem("name").value = profile.name || user.name;
   profileForm.elements.namedItem("username").value = profile.username || "";

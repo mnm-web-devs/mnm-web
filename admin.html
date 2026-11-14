@@ -24,6 +24,7 @@
       <a href="#overview" data-title="Overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg>Overview</a>
       <a href="#students" data-title="Students"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.6c2.6.2 4.6 2 5.3 4.9"/></svg>Students</a>
       <a href="#workshops" data-title="Workshops"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4m8-4v4"/></svg>Workshops</a>
+      <a href="#applications" data-title="Applications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h8l4 4V21H5V3.5z"/><path d="M14.5 3.5V8H19M8 12h8m-8 4h8"/></svg>Applications</a>
       <a href="#submissions" data-title="Submissions"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 13l2 2 4-4"/></svg>Submissions <span class="count" id="c-sub"></span></a>
       <a href="#inquiries" data-title="Partners &amp; sponsors"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>Partners <span class="count" id="c-inq"></span></a>
     </nav>
@@ -98,6 +99,34 @@
       </div>
     </section>
 
+    <section class="view" id="applications" tabindex="-1" hidden>
+      <div class="toolbar">
+        <select id="app-type-filter" aria-label="Filter applications by role">
+          <option value="">All roles</option>
+          <option value="staff">Staff</option>
+          <option value="moderator">Moderator</option>
+          <option value="lead">Lead</option>
+        </select>
+        <select id="app-status-filter" aria-label="Filter applications by status">
+          <option value="open">Needs review</option>
+          <option value="all">All statuses</option>
+          <option value="submitted">Submitted</option>
+          <option value="under_review">Under Review</option>
+          <option value="approved">Accepted</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <label class="search sm"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="app-search" placeholder="Search ID or email" aria-label="Search application ID or email" /></label>
+        <button class="btn btn-sm btn-ghost" type="button" id="app-refresh"><span>Refresh</span></button>
+      </div>
+      <p class="application-notice" id="admin-applications-status" role="status" aria-live="polite">Applications will appear here.</p>
+      <div class="application-admin-list" id="admin-applications-list"></div>
+      <div class="application-admin-pagination">
+        <button class="text-btn" type="button" id="app-page-previous">← Previous</button>
+        <span class="muted small" id="app-page-label"></span>
+        <button class="text-btn" type="button" id="app-page-next">Next →</button>
+      </div>
+    </section>
+
     <!-- SUBMISSIONS -->
     <section class="view" id="submissions" tabindex="-1" hidden>
       <div class="toolbar">
@@ -114,6 +143,54 @@
     <section class="view" id="inquiries" tabindex="-1" hidden>
       <div class="sub-list" id="inq-list"></div>
     </section>
+  </div>
+
+  <div class="modal" id="application-modal" hidden role="dialog" aria-modal="true" aria-labelledby="admin-application-title">
+    <article class="modal-card application-admin-modal">
+      <header>
+        <div>
+          <h2 id="admin-application-title">Application</h2>
+          <p class="muted small" id="admin-application-meta"></p>
+        </div>
+        <button class="icon-btn" type="button" data-close aria-label="Close">✕</button>
+      </header>
+      <div class="application-admin-columns">
+        <section>
+          <h3>Applicant responses</h3>
+          <div class="application-response-groups" id="admin-application-responses"></div>
+        </section>
+        <section>
+          <h3>Admin review</h3>
+          <p class="muted small">Votes and private notes are visible to admins only.</p>
+          <p class="muted small" id="admin-application-sync-status" role="status" aria-live="polite"></p>
+          <p class="application-review-summary" id="admin-application-vote-summary"></p>
+          <div class="application-voter-list" id="admin-application-voters"></div>
+          <div class="application-vote-history" id="admin-application-vote-history"></div>
+          <div class="application-vote-controls" id="admin-application-vote-controls" hidden>
+            <p class="muted small">You can change your verdict until a final result is sent.</p>
+            <div class="row-end">
+              <button class="btn btn-sm btn-ghost" type="button" data-application-vote="rejected">Vote Rejected</button>
+              <button class="btn btn-sm" type="button" data-application-vote="approved">Vote Accepted</button>
+            </div>
+          </div>
+          <p class="application-notice" id="admin-application-review-message" role="status"></p>
+          <section class="application-notes">
+            <h3>Private notes</h3>
+            <div class="application-note-list" id="admin-application-notes"></div>
+            <form class="form" id="admin-application-note-form" hidden>
+              <label class="field"><span>Add a private note</span><textarea name="notes" rows="3" maxlength="5000" required></textarea></label>
+              <button class="btn btn-sm" type="submit"><span>Add note</span></button>
+            </form>
+          </section>
+          <form class="form application-finalize-form" id="admin-application-finalize-form" hidden>
+            <h3 id="admin-application-finalize-title">Send final result</h3>
+            <p class="muted small" id="admin-application-finalize-summary"></p>
+            <label class="field"><span>Message to the applicant</span><textarea name="publicMessage" rows="4" maxlength="2000" required></textarea></label>
+            <button class="btn btn-sm" type="submit"><span>Send final result</span></button>
+          </form>
+        </section>
+      </div>
+    </article>
   </div>
 
   <!-- new workshop modal -->
@@ -140,6 +217,7 @@
   <script src="js/api.js"></script>
   <script src="js/shell.js"></script>
   <script src="js/admin.js"></script>
+  <script src="js/admin-applications.js"></script>
   <script src="js/analytics.js"></script>
 </body>
 </html>

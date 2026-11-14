@@ -37,14 +37,16 @@ The libraries are vendored in `vendor/`, so the site works on any static host: G
 New pages:
 
 - `login.html`: sign in / create account (email + password, Google, Discord, forgot password)
-- `dashboard.html`: student dashboard (overview, tracks, workshops with registration, monthly challenge submission, leaderboard, profile)
-- `admin.html`: admin dashboard (stats + chart, students table with search/filter/sort/CSV export, create/delete workshops, review submissions, partner/sponsor inquiries)
+- `dashboard.html`: student dashboard (overview, tracks, workshops with registration, monthly challenge submission, leaderboard, profile, Staff applications and status)
+- `admin.html`: admin dashboard (stats + chart, students table with search/filter/sort/CSV export, create/delete workshops, application voting and private notes, review submissions, partner/sponsor inquiries)
 
 The account and dashboard flows call the MNM API. For local development, copy `.env.example` to `.env`, set `MNM_CLERK_PUBLISHABLE_KEY` to your Clerk **publishable** key, then run `python serve_frontend.py`. This small local server exposes only those two public settings to the browser through `js/env.js`; the browser cannot read `.env` directly. Do not put Clerk's secret key, the Supabase service-role key, or the admin JWT signing secret in the frontend `.env`.
 
 `MNM_API_BASE_URL` should point to the backend API, for example `https://mnm-web-ochre.vercel.app/api/v1`. `MNM_CLERK_PUBLISHABLE_KEY` is safe to expose; it must match the Clerk instance configured by the backend.
 
 Students authenticate through Clerk. Set the OAuth callback/redirect URL for the local or deployed frontend to `oauth-callback.html` in Clerk. New Google/Discord accounts must choose a username and main interest before entering the dashboard. Email/password account creation also requires a user-chosen username and main interest, then verifies the email. These values are saved to the backend student profile. Admin email/password sign-in uses the backend and stores its short-lived bearer token in the current browser session. The API enforces authorization independently of the page-level dashboard guard.
+
+For UI-only dashboard testing without Clerk or the backend, run `python serve_frontend.py` and open `http://127.0.0.1:3000/dashboard.html?localDemo=1`. The admin review demo is at `http://127.0.0.1:3000/admin.html?localDemo=1`; its sample review has four voters and starts with a 2–1 split so you can test tie resolution, vote changes, private notes, and finalization. This opt-in demo works only on localhost, uses sample data, and keeps changes in memory for the current page session. It does not create or modify real accounts or applications. Remove `?localDemo=1` to use the normal authentication flow.
 
 Files: `js/api.js` (data), `js/auth.js` (login page), `js/shell.js` (shared sidebar/guard/toasts), `js/dashboard.js`, `js/admin.js`, `css/app.css`.
 
@@ -60,6 +62,6 @@ Fixes from `Audit.md`. Things to know when editing:
 - **Marquee:** list each word once; the loop copy is created by JS.
 - New pages: `privacy.html`, `404.html`. New files: `robots.txt`, `sitemap.xml`, `favicon.ico`, `assets/og.png` (link previews), `assets/apple-touch-icon.png`.
 
-The backend's `ALLOWED_ORIGINS` must include the exact frontend origins, including `https://mnm-liard.vercel.app` and, when live, `https://mnmstem.study`. Applications are intentionally separate from creating a student account and are not currently shown in the student dashboard.
+The backend's `ALLOWED_ORIGINS` must include the exact frontend origins, including `https://mnm-liard.vercel.app` and, when live, `https://mnmstem.study`. Applications are separate from account creation and are available in the student dashboard.
 
 API endpoints and request shapes are documented in the backend repository's `API_REFERENCE.md`.
