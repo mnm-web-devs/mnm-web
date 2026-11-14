@@ -536,6 +536,11 @@
       async updateProfile(updates) {
         return saveStudentProfile(updates);
       },
+      async uploadAvatar(file) {
+        const formData = new FormData();
+        formData.append("avatar", file);
+        return request("/student/avatar", { method: "POST", body: formData });
+      },
       async completeLesson(id, completed = true) {
         return request(`/student/lessons/${encodeURIComponent(id)}/completion`, {
           method: completed ? "PUT" : "DELETE",

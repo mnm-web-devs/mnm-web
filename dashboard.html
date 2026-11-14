@@ -17,9 +17,26 @@
   <link rel="stylesheet" href="css/app.css" />
   <link rel="stylesheet" href="css/profile.css" />
 </head>
-<body class="app" data-role="student">
-  <a class="skip" href="#main">Skip to content</a>
-  <aside class="side" aria-label="Dashboard menu">
+<body class="app" data-role="student" aria-busy="true">
+  <div class="dashboard-loading" id="dashboard-loading">
+    <div class="dashboard-loading-card">
+      <div id="dashboard-loading-status" role="status" aria-live="polite">
+        <span class="dashboard-spinner" aria-hidden="true"></span>
+        <h1>Loading your dashboard</h1>
+        <p>Verifying your session and fetching your MNM data.</p>
+      </div>
+      <div id="dashboard-loading-error" role="alert" hidden>
+        <h1>Dashboard unavailable</h1>
+        <p id="dashboard-loading-message">We couldn't load your dashboard.</p>
+        <div class="dashboard-loading-actions">
+          <button class="btn btn-sm" type="button" id="dashboard-retry"><span>Try again</span></button>
+          <a class="btn btn-sm btn-ghost" href="login.html"><span>Sign in</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a class="skip" href="#main" inert aria-hidden="true">Skip to content</a>
+  <aside class="side" aria-label="Dashboard menu" inert aria-hidden="true">
     <a class="side-brand" href="index.html" aria-label="MNM home"><img src="assets/logo-dark.webp" alt="MNM" width="40" height="39" /><span>MNM</span></a>
     <nav class="side-nav">
       <a href="#overview" data-title="Overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg>Overview</a>
@@ -38,7 +55,7 @@
   </aside>
   <div class="scrim" aria-hidden="true"></div>
 
-  <div class="main" id="main">
+  <div class="main" id="main" inert aria-hidden="true">
     <header class="top">
       <button class="icon-btn menu-btn" type="button" aria-label="Open menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <h1 id="view-title">Overview</h1>
@@ -53,7 +70,7 @@
           <h2>Hi, <span data-user-first></span> 👋</h2>
           <p class="muted">Here's what's next on your MNM journey.</p>
         </div>
-        <div class="level-ring" id="level-ring" aria-label="Level"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52"/><circle class="fill" cx="60" cy="60" r="52"/></svg><b>7</b><small>Level</small></div>
+        <div class="level-ring" id="level-ring" aria-label="Level"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52"/><circle class="fill" cx="60" cy="60" r="52"/></svg><b>—</b><small>Level</small></div>
       </div>
       <div class="stats" id="stats"></div>
       <div class="grid-2">
@@ -111,7 +128,13 @@
         <article class="profile-hero" id="profile-hero" aria-label="Your MNM profile">
           <div class="ph-banner" aria-hidden="true"><span class="ph-glyph g1">π</span><span class="ph-glyph g2">◉</span><span class="ph-glyph g3">✚</span></div>
           <div class="ph-body">
-            <div class="ph-avatar" id="ph-avatar"><span data-user-initials></span></div>
+            <div class="ph-avatar" id="ph-avatar">
+              <span data-user-initials></span>
+              <button class="ph-avatar-edit" id="avatar-edit" type="button" aria-label="Change profile photo" title="Change profile photo">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+              </button>
+            </div>
+            <input class="sr" id="avatar-file" type="file" accept="image/png,image/jpeg,image/webp" />
             <div class="ph-id">
               <h2 class="ph-name" data-user-name></h2>
               <p class="ph-handle" id="ph-handle"></p>

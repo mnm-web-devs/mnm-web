@@ -93,6 +93,12 @@
 .avatar.sm { width: 30px; height: 30px; font-size: .7rem; }
 .icon-btn { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: #dfe7f5; cursor: pointer; transition: background .2s; }
 .icon-btn:hover { background: rgba(255,255,255,.1); }
+.dashboard-loading { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgba(4, 11, 26, .96); }
+.dashboard-loading-card { width: min(440px, 100%); padding: 32px; border: 1px solid var(--line); border-radius: 22px; background: var(--card); text-align: center; box-shadow: 0 24px 70px rgba(0,0,0,.4); }
+.dashboard-loading-card h1 { margin: 14px 0 8px; font: 700 1.35rem/1.2 var(--head); }
+.dashboard-loading-card p { margin: 0; color: var(--muted); line-height: 1.5; overflow-wrap: anywhere; }
+.dashboard-spinner { display: inline-block; width: 34px; height: 34px; border: 3px solid rgba(255,255,255,.18); border-right-color: var(--mint); border-radius: 50%; animation: spin .8s linear infinite; }
+.dashboard-loading-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 .main { margin-left: var(--side); padding: 0 clamp(16px, 3vw, 40px) 60px; min-height: 100svh; }
 .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 14px; padding: 18px 0; margin-bottom: 8px; background: linear-gradient(var(--bg) 70%, transparent); }
 .top h1 { flex: 1; }

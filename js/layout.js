@@ -8,6 +8,7 @@
     ["track-mathematics.html", "Mathematics", "The language of science", "var(--mint)", "π"],
   ];
   const lab = ["neuron.html", "Neuron Lab", "Fire a real neuron, interactive", "#ffd27a", "⚡"];
+  const chevron = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
 
   /* Signed in? Clerk keeps a readable "__client_uat" cookie (non-zero when a session exists);
      admins use a session-storage token. The name comes from a small cache the dashboard writes. */
@@ -33,12 +34,17 @@
     <nav class="nav-links" aria-label="Main">
       <a href="index.html"${is("index.html")}>Home</a>
       <div class="dd">
-        <button class="dd-btn" type="button" aria-expanded="false" aria-haspopup="true">Tracks <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <button class="dd-btn" type="button" aria-expanded="false" aria-haspopup="true">Tracks ${chevron}</button>
         <div class="dd-menu" role="menu">
-          ${[...tracks, lab].map(([href, t, s, c, g]) => `<a role="menuitem" href="${href}"${is(href)} style="--c:${c}"><i aria-hidden="true">${g}</i><span><b>${t}</b><small>${s}</small></span></a>`).join("")}
+          ${tracks.map(([href, t, s, c, g]) => `<a role="menuitem" href="${href}"${is(href)} style="--c:${c}"><i aria-hidden="true">${g}</i><span><b>${t}</b><small>${s}</small></span></a>`).join("")}
         </div>
       </div>
-      <a href="workshops.html"${is("workshops.html")}>Workshops</a>
+      <div class="dd">
+        <button class="dd-btn" type="button" aria-expanded="false" aria-haspopup="true">Interactives ${chevron}</button>
+        <div class="dd-menu" role="menu">
+          <a role="menuitem" href="${lab[0]}"${is(lab[0])} style="--c:${lab[3]}"><i aria-hidden="true">${lab[4]}</i><span><b>${lab[1]}</b><small>${lab[2]}</small></span></a>
+        </div>
+      </div>
       <a href="hub.html"${is("hub.html")}>Opportunities</a>
       <a href="about.html"${is("about.html")}>About</a>
       ${me ? `<a class="btn btn-sm magnetic" href="dashboard.html"><span>Dashboard</span></a>${meChip}` : `<a href="login.html"${is("login.html")}>Sign in</a>
@@ -49,8 +55,10 @@
   <div class="mobile-menu" aria-hidden="true">
     <a href="index.html">Home</a>
     ${tracks.map(([href, t, , c]) => `<a href="${href}" style="--c:${c}">${t}</a>`).join("")}
-    <a href="neuron.html" style="--c:#ffd27a">Neuron Lab</a>
-    <a href="workshops.html">Workshops</a>
+    <div class="mobile-group">
+      <button class="mobile-group-btn" type="button" aria-expanded="false" aria-controls="mobile-interactives">Interactives ${chevron}</button>
+      <div class="mobile-submenu" id="mobile-interactives" hidden><a href="${lab[0]}" style="--c:${lab[3]}">${lab[1]}</a></div>
+    </div>
     <a href="hub.html">Opportunities</a>
     <a href="about.html">About</a>
     ${me ? `<a class="btn" href="dashboard.html"><span>My dashboard →</span></a>` : `<a href="login.html">Sign in</a>
@@ -69,7 +77,8 @@
       </div>
       <nav class="footer-cols" aria-label="Footer">
         <div><b>Tracks</b>${tracks.map(([h, t]) => `<a href="${h}">${t}</a>`).join("")}</div>
-        <div><b>MNM</b><a href="workshops.html">Workshops</a><a href="neuron.html">Neuron Lab</a><a href="hub.html">Opportunities</a><a href="about.html">About</a><a href="join.html">Join</a></div>
+        <div><b>Interactives</b><a href="neuron.html">Neuron Lab</a></div>
+        <div><b>MNM</b><a href="hub.html">Opportunities</a><a href="about.html">About</a><a href="join.html">Join</a></div>
         <div><b>Support</b><a href="sponsor.html">Sponsor &amp; partner</a><a href="sponsor.html?type=volunteer#contact">Volunteer</a><a href="privacy.html">Privacy</a></div>
         <div><b>Community</b><a data-link="discord">Discord</a><a data-link="email">Email us</a></div>
       </nav>
@@ -80,16 +89,48 @@
   }
 
   /* dropdown */
-  const dd = document.querySelector(".dd");
-  if (dd) {
+  const dropdowns = [...document.querySelectorAll(".dd")];
+  const closeDropdowns = (except) => dropdowns.forEach((dd) => {
+    if (dd === except) return;
     const btn = dd.querySelector(".dd-btn");
-    const set = (v) => { dd.classList.toggle("open", v); btn.setAttribute("aria-expanded", v); };
+    dd.classList.remove("open");
+    btn.setAttribute("aria-expanded", "false");
+  });
+  dropdowns.forEach((dd) => {
+    const btn = dd.querySelector(".dd-btn");
+    const links = [...dd.querySelectorAll('[role="menuitem"]')];
+    const set = (open, focus = false) => {
+      closeDropdowns(open ? dd : null);
+      dd.classList.toggle("open", open);
+      btn.setAttribute("aria-expanded", String(open));
+      if (focus && open) links[0]?.focus();
+      if (focus && !open) btn.focus();
+    };
     btn.addEventListener("click", (e) => { e.stopPropagation(); set(!dd.classList.contains("open")); });
     dd.addEventListener("pointerenter", (e) => e.pointerType === "mouse" && set(true));
     dd.addEventListener("pointerleave", (e) => e.pointerType === "mouse" && set(false));
-    document.addEventListener("click", () => set(false));
-    document.addEventListener("keydown", (e) => e.key === "Escape" && set(false));
-  }
+    btn.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown") { e.preventDefault(); set(true, true); }
+    });
+    dd.addEventListener("keydown", (e) => {
+      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key) || !links.length) return;
+      const index = links.indexOf(document.activeElement);
+      if (index < 0) return;
+      e.preventDefault();
+      const next = e.key === "Home" ? 0 : e.key === "End" ? links.length - 1 :
+        (index + (e.key === "ArrowDown" ? 1 : links.length - 1)) % links.length;
+      links[next].focus();
+    });
+  });
+  document.addEventListener("click", () => closeDropdowns());
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const open = dropdowns.find((dd) => dd.classList.contains("open"));
+    if (!open) return;
+    e.stopPropagation();
+    open.querySelector(".dd-btn").focus();
+    closeDropdowns();
+  });
 
   /* mobile menu: focus stays inside while open, Escape closes, focus returns to the burger */
   const burger = document.querySelector(".burger"), mm = document.querySelector(".mobile-menu");
@@ -107,11 +148,20 @@
     mm.inert = true;
     burger.addEventListener("click", () => setMenu(!document.body.classList.contains("menu-open")));
     mm.addEventListener("click", (e) => e.target.closest("a") && setMenu(false));
+    mm.querySelectorAll(".mobile-group-btn").forEach((button) => {
+      const submenu = button.nextElementSibling;
+      button.addEventListener("click", () => {
+        const expanded = button.getAttribute("aria-expanded") !== "true";
+        button.setAttribute("aria-expanded", String(expanded));
+        submenu.hidden = !expanded;
+      });
+    });
     document.addEventListener("keydown", (e) => {
       if (!document.body.classList.contains("menu-open")) return;
       if (e.key === "Escape") return setMenu(false);
       if (e.key !== "Tab") return;
-      const f = [burger, ...mm.querySelectorAll("a")], i = f.indexOf(document.activeElement);
+      const visibleItems = [...mm.querySelectorAll("a, button")].filter((el) => !el.closest("[hidden]"));
+      const f = [burger, ...visibleItems], i = f.indexOf(document.activeElement);
       if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
       else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
     });
