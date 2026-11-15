@@ -63,7 +63,14 @@ const showDashboardError = (error) => {
       const status = document.createElement("span");
       status.className = `application-status ${application.status}`;
       status.textContent = applicationStatusLabel[application.status] || "Status unavailable";
-      summary.append(id, type, status);
+      const date = document.createElement("span");
+      date.className = "application-date";
+      const submitted = application.submittedAt ? new Date(application.submittedAt) : null;
+      date.textContent = submitted && !Number.isNaN(submitted.getTime())
+        ? `Submitted ${submitted.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}`
+        : "";
+      summary.append(id, type, date, status);
+      if (["approved", "rejected"].includes(application.status)) details.open = true;
       const message = document.createElement("p");
       message.className = "application-detail";
       const displayMessage = applicationStatusCopy[application.status] ||

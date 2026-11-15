@@ -233,18 +233,29 @@
       for (const application of applications) {
         const card = document.createElement("article");
         card.className = "application-admin-card";
+        const name = application.applicant || "Applicant name unavailable";
+        const avatar = makeText("span", name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "?", "avatar");
+        avatar.setAttribute("aria-hidden", "true");
         const content = document.createElement("div");
-        content.className = "grow";
-        content.append(makeText("h3", application.applicant || "Applicant name unavailable"));
-        content.append(makeText("p", `${application.applicationId} · ${application.email}`, "muted small"));
-        content.append(makeText("p", `${dateLabel(application.submittedAt)} · ${application.type[0].toUpperCase()}${application.type.slice(1)}`, "muted small"));
+        content.className = "application-admin-info";
+        const title = document.createElement("h3");
+        title.append(document.createTextNode(name));
+        const type = application.type ? `${application.type[0].toUpperCase()}${application.type.slice(1)}` : "Application";
+        title.append(makeText("span", type, "application-role-chip"));
+        content.append(title);
+        content.append(makeText("p", application.email || "", "muted small"));
+        const metaParts = [dateLabel(application.submittedAt), application.applicationId];
+        if (Number.isFinite(application.votedCount) && Number.isFinite(application.totalVoters)) {
+          metaParts.push(`${application.votedCount}/${application.totalVoters} voted`);
+        }
+        content.append(makeText("p", metaParts.join(" · "), "muted small application-admin-meta"));
         const status = makeText("span", statusNames[application.status] || application.status, `application-status ${application.status}`);
         const open = document.createElement("button");
         open.type = "button";
-        open.className = "btn btn-sm btn-ghost";
+        open.className = application.status === "submitted" ? "btn btn-sm" : "btn btn-sm btn-ghost";
         open.dataset.openApplication = application.applicationId;
         open.textContent = application.status === "submitted" ? "Start review" : "Open";
-        card.append(content, status, open);
+        card.append(avatar, content, status, open);
         list.append(card);
       }
     }
@@ -307,7 +318,7 @@
       row.className = "application-voter";
       const name = vote.adminId === user.id ? `${vote.name} (you)` : vote.name;
       row.append(makeText("b", name));
-      row.append(makeText("span", vote.verdict ? statusNames[vote.verdict] : "No verdict yet"));
+      row.append(makeText("span", vote.verdict ? statusNames[vote.verdict] : "No verdict yet", `application-status ${vote.verdict || "pending"}`));
       voterContainer.append(row);
     }
     if (!votes.length) voterContainer.append(makeText("p", "Review roster is not available.", "empty"));
@@ -324,6 +335,9 @@
       }
     }
 
+    $$("[data-application-vote]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(currentVote?.verdict === button.dataset.applicationVote));
+    });
     voteControls.hidden = !canReview;
     noteForm.hidden = !canReview;
     if (application.status === "under_review" && !currentVote) {
@@ -354,8 +368,10 @@
     for (const item of application.notes || []) {
       const note = document.createElement("article");
       note.className = "application-note";
-      note.append(makeText("b", item.adminName));
-      note.append(makeText("time", dateLabel(item.createdAt)));
+      const head = document.createElement("div");
+      head.className = "application-note-head";
+      head.append(makeText("b", item.adminName), makeText("time", dateLabel(item.createdAt)));
+      note.append(head);
       note.append(makeText("p", item.note));
       container.append(note);
     }
@@ -393,6 +409,7 @@
     finalizeForm.hidden = true;
     reviewMessage.textContent = "";
     syncStatus.textContent = "";
+    setTab("responses");
     openModal(modal);
     try {
       if (["submitted", "under_review"].includes(applicationStatus)) {
@@ -503,7 +520,19 @@
     }
   });
 
+  const columns = modal.querySelector(".application-admin-columns");
+  const setTab = (tab) => {
+    columns.dataset.tab = tab;
+    $$("[data-application-tab]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.applicationTab === tab)));
+    columns.querySelectorAll("section").forEach((section) => { section.scrollTop = 0; });
+  };
+  $$("[data-application-tab]").forEach((button) => button.addEventListener("click", () => setTab(button.dataset.applicationTab)));
+
+  const newWorkshop = $("[data-new-ws]");
+  const syncTopAction = (view) => { if (newWorkshop) newWorkshop.hidden = view === "applications"; };
+  syncTopAction(location.hash.slice(1));
   document.addEventListener("mnm:view", (event) => {
+    syncTopAction(event.detail);
     if (event.detail === "applications") loadApplications();
   });
   modal.addEventListener("click", (event) => {
