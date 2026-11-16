@@ -16,6 +16,21 @@ const showDashboardError = (error) => {
   document.getElementById("dashboard-retry").addEventListener("click", () => location.reload(), { once: true });
 };
 
+document.getElementById("dashboard-signin").addEventListener("click", async (event) => {
+  const button = event.currentTarget;
+  const message = document.getElementById("dashboard-loading-message");
+  button.disabled = true;
+  try {
+    await window.MNM_API.auth.signOut();
+    try { localStorage.removeItem("mnm-me"); } catch {}
+    location.replace("login.html?switch=1");
+  } catch (error) {
+    console.error("Could not sign out from the dashboard error screen:", error);
+    button.disabled = false;
+    message.textContent = `${error?.message || "We couldn't sign you out."} Please try again.`;
+  }
+});
+
 (async () => {
   await window.MNM_UI_READY;
   if (!window.MNM_UI) return;
@@ -38,8 +53,9 @@ const showDashboardError = (error) => {
 
   MNM_UI.start();
 
-  const [ov, tracks, workshops, initialChallenge, news, leaderboard, profile] = await Promise.all([
-    API.overview(), API.tracks(), API.workshops(), API.challenge(), API.announcements(), API.leaderboard(), API.profile(),
+  const profile = await API.profile();
+  const [ov, tracks, workshops, initialChallenge, news, leaderboard] = await Promise.all([
+    API.overview(), API.tracks(), API.workshops(), API.challenge(), API.announcements(), API.leaderboard(),
   ]);
   let ch = initialChallenge;
   let applicationLoadPromise;
