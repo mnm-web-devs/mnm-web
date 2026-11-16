@@ -11,6 +11,7 @@
     new URLSearchParams(location.search).get("localDemo") === "1";
   const NEW_PASSWORD_PATTERN = /^(?=.*[A-Z])(?=(?:.*[a-z]){2})(?=.*\d)(?=.*[@$#&%*!]).*$/;
   let currentUser = null;
+  let studentProfile = null;
   let clerkPromise;
   let adminSubmissions = [];
   let adminInquiries = [];
@@ -432,7 +433,7 @@
       // MNM titles shown on the profile ("Director", "Design Lead", ...). Set by an admin in Clerk:
       // Users → user → Metadata → Public: { "mnm_titles": ["Director", "Tech Lead", "Staff"] }
       titles: normalizeTitles(user.publicMetadata?.mnm_titles ?? user.publicMetadata?.titles),
-      avatarUrl: user.hasImage ? user.imageUrl : null,
+      avatarUrl: null,
       joinedAt: user.createdAt || null,
     };
   }
@@ -517,7 +518,7 @@
 
   async function getStudentProfile() {
     const { profile } = await request("/student/profile");
-    return {
+    studentProfile = {
       name: currentUser?.name || "",
       email: profile.email,
       username: profile.username,
@@ -530,6 +531,7 @@
       interests: profile.interests,
       emailWorkshopUpdates: profile.email_workshop_updates,
     };
+    return studentProfile;
   }
 
   async function saveStudentProfile(updates) {
@@ -593,6 +595,16 @@
         const clerk = await getClerk();
         await handleOAuthRedirectOnce(clerk);
         currentUser = userFromClerk(clerk);
+        studentProfile = null;
+        if (currentUser) {
+          currentUser.avatarUrl = null;
+          try {
+            const profile = await getStudentProfile();
+            currentUser.avatarUrl = profile.avatarUrl;
+          } catch (error) {
+            console.error("Could not load the student avatar from the profile database:", error);
+          }
+        }
         return currentUser;
       },
       async completeOAuthRedirect() {
@@ -846,6 +858,7 @@
         const clerk = await getClerk();
         await clerk.signOut();
         currentUser = null;
+        studentProfile = null;
       },
     },
     student: {
@@ -881,6 +894,7 @@
       },
       async profile() {
         if (LOCAL_DEMO_ENABLED) return { ...localDemoProfile };
+        if (studentProfile) return { ...studentProfile };
         let lastError;
         for (let attempt = 0; attempt < 8; attempt += 1) {
           try {
@@ -903,7 +917,10 @@
         }
         const formData = new FormData();
         formData.append("avatar", file);
-        return request("/student/avatar", { method: "POST", body: formData });
+        const uploaded = await request("/student/avatar", { method: "POST", body: formData });
+        if (studentProfile) studentProfile.avatarUrl = uploaded.avatarUrl;
+        if (currentUser?.role === "student") currentUser.avatarUrl = uploaded.avatarUrl;
+        return uploaded;
       },
       async applications() {
         return (await request("/applications/mine")).applications;

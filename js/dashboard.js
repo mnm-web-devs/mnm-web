@@ -301,7 +301,7 @@ document.getElementById("dashboard-signin").addEventListener("click", async (eve
     const slot = $("#ph-avatar");
     const initials = slot.querySelector("span");
     const existingImage = slot.querySelector("img");
-    const avatarUrl = profile.avatarUrl || user.avatarUrl;
+    const avatarUrl = profile.avatarUrl;
     if (avatarUrl) {
       const img = existingImage || document.createElement("img");
       img.src = avatarUrl; img.alt = ""; img.referrerPolicy = "no-referrer";
@@ -335,6 +335,17 @@ document.getElementById("dashboard-signin").addEventListener("click", async (eve
     try {
       const uploaded = await API.uploadAvatar(file);
       profile.avatarUrl = uploaded.avatarUrl;
+      user.avatarUrl = uploaded.avatarUrl;
+      try {
+        const cached = JSON.parse(localStorage.getItem("mnm-me") || "{}");
+        localStorage.setItem("mnm-me", JSON.stringify({
+          ...cached,
+          avatar: uploaded.avatarUrl,
+          avatarSource: "database",
+        }));
+      } catch (error) {
+        console.error("Could not update the cached database avatar URL:", error);
+      }
       renderProfileHero();
       toast("Profile photo updated.");
     } catch (error) {
