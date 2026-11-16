@@ -18,23 +18,37 @@
 
   MNM_UI.start();
   const [stats, students, workshops, subs, inq] = await Promise.all([API.stats(), API.students(), API.workshops(), API.submissions(), API.inquiries()]);
+  let openApplications = stats.openApplications;
 
   /* ---------- overview ---------- */
   const counts = () => {
     const p = subs.filter((s) => s.status === "pending").length, n = inq.filter((i) => i.status === "new").length;
+    $("#c-app").textContent = openApplications || "";
     $("#c-sub").textContent = p || ""; $("#c-inq").textContent = n || "";
     return { p, n };
   };
   const drawStats = () => {
-    const { p, n } = counts();
+    const { n } = counts();
     $("#a-stats").innerHTML = [
       ["Students", stats.students, `+${stats.newThisWeek} this week`],
       ["Workshop registrations", stats.registrations, "last 30 days"],
-      ["Pending reviews", p, p ? "waiting for you" : "all clear ✓"],
+      ["Open applications", openApplications, openApplications ? "awaiting review or decision" : "all clear ✓"],
       ["Partner inquiries", n, "new"],
     ].map(([k, v, s]) => `<div class="stat"><small>${k}</small><b>${v}</b><span>${s}</span></div>`).join("");
   };
   drawStats();
+  const refreshApplicationCount = async () => {
+    try {
+      openApplications = await API.openApplicationsCount();
+      drawStats();
+    } catch (error) {
+      console.error("Could not refresh the open application count:", error);
+    }
+  };
+  window.addEventListener("mnm:applications-changed", refreshApplicationCount);
+  window.setInterval(() => {
+    if (!document.hidden) refreshApplicationCount();
+  }, 30000);
 
   const max = Math.max(1, ...stats.byDay);
   $("#chart-total").textContent = stats.byDay.reduce((a, b) => a + b, 0) + " total";

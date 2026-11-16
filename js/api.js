@@ -481,7 +481,7 @@
   async function request(path, options = {}) {
     if (LOCAL_DEMO_ENABLED) return localDemoRequest(path, options);
     if (!API_BASE) throw new Error("The MNM API base URL is not configured.");
-    const { method = "GET", body, auth = true } = options;
+    const { method = "GET", body, auth = true, cache } = options;
     const headers = new Headers(options.headers || {});
     if (body !== undefined && !(body instanceof FormData)) headers.set("Content-Type", "application/json");
     if (auth) {
@@ -495,6 +495,7 @@
       headers,
       body: body === undefined ? undefined : body instanceof FormData ? body : JSON.stringify(body),
       credentials: "omit",
+      ...(cache ? { cache } : {}),
     });
     let payload;
     try {
@@ -970,15 +971,27 @@
       },
       async stats() {
         const { dashboard } = await request("/admin/dashboard");
+        const openApplications = Object.values(dashboard.counts || {}).reduce(
+          (total, counts) => total + (counts.submitted || 0) + (counts.under_review || 0),
+          0,
+        );
         return {
           students: dashboard.totals.students,
           newThisWeek: dashboard.totals.newThisWeek,
+          openApplications,
           registrations: dashboard.totals.workshopRegistrations30d,
           pending: dashboard.totals.pendingSubmissions,
           inquiries: dashboard.totals.pendingInquiries,
           byDay: dashboard.registrationsByDay,
           studentsByTrack: dashboard.studentsByTrack,
         };
+      },
+      async openApplicationsCount() {
+        const { pagination } = await request(
+          "/admin/applications?page=1&limit=1&status=open",
+          { cache: "no-store" },
+        );
+        return pagination.total;
       },
       async students() {
         return loadAllStudents();
