@@ -278,6 +278,7 @@
         search: searchInput.value.trim(),
       });
       renderApplications(result.applications, result.pagination.total);
+      window.dispatchEvent(new Event("mnm:applications-changed"));
     } catch (error) {
       statusMessage.textContent = error.message || "Could not load applications.";
       const retry = document.createElement("button");
