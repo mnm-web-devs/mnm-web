@@ -18,7 +18,11 @@
       const signed = (uat && uat[1] && uat[1] !== "0") || !!sessionStorage.getItem("mnm-admin-session");
       if (!signed) return null;
       const cached = JSON.parse(localStorage.getItem("mnm-me") || "null") || {};
-      return { name: cached.name || "", initials: cached.initials || "", avatar: cached.avatar || "" };
+      return {
+        name: cached.name || "",
+        initials: cached.initials || "",
+        avatar: cached.avatarSource === "database" ? cached.avatar || "" : "",
+      };
     } catch { return null; }
   })();
   const escTxt = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -86,6 +90,79 @@
     <div class="footer-word" aria-hidden="true">MNM</div>
     <p class="wrap small">© ${new Date().getFullYear()} MNM. Made by students.</p>
   </footer>`;
+  }
+
+  async function refreshMeAvatar() {
+    try {
+      if (!window.MNM_API) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = "js/api.js";
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.append(script);
+        });
+      }
+      const user = await window.MNM_API.auth.ready();
+      if (!user) return;
+
+      const avatar = user.avatarUrl || "";
+      const initials = user.name.split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase() || "★";
+      try {
+        localStorage.setItem("mnm-me", JSON.stringify({
+          name: user.name,
+          initials,
+          avatar,
+          avatarSource: "database",
+        }));
+      } catch (error) {
+        console.error("Could not update the cached database avatar URL:", error);
+      }
+
+      const chip = document.querySelector(".me-chip");
+      if (!chip) return;
+      const existingImage = chip.querySelector("img");
+      const existingInitials = chip.querySelector("span");
+      if (avatar) {
+        const image = existingImage || document.createElement("img");
+        image.src = avatar;
+        image.alt = "";
+        image.referrerPolicy = "no-referrer";
+        image.onerror = () => {
+          image.remove();
+          if (!chip.querySelector("span")) {
+            const fallback = document.createElement("span");
+            fallback.textContent = initials;
+            chip.prepend(fallback);
+          }
+        };
+        if (!existingImage) {
+          existingInitials?.remove();
+          chip.prepend(image);
+        }
+      } else {
+        existingImage?.remove();
+        if (!existingInitials) {
+          const fallback = document.createElement("span");
+          fallback.textContent = initials;
+          chip.prepend(fallback);
+        } else {
+          existingInitials.textContent = initials;
+        }
+      }
+      const name = chip.querySelector("b");
+      if (name) name.textContent = user.name.split(" ")[0] || "My dashboard";
+    } catch (error) {
+      console.error("Could not refresh the account avatar from the profile database:", error);
+    }
+  }
+
+  if (me) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", refreshMeAvatar, { once: true });
+    } else {
+      refreshMeAvatar();
+    }
   }
 
   /* dropdown */

@@ -36,8 +36,25 @@ window.MNM_UI_READY = (async () => {
   $$("[data-user-first]").forEach((el) => (el.textContent = user.name.split(" ")[0]));
   $$("[data-user-email]").forEach((el) => (el.textContent = user.email));
   $$("[data-user-initials]").forEach((el) => (el.textContent = initials(user.name)));
+  $$(".side-user [data-user-initials]").forEach((el) => {
+    if (!user.avatarUrl) return;
+    const image = document.createElement("img");
+    image.src = user.avatarUrl;
+    image.alt = "";
+    image.referrerPolicy = "no-referrer";
+    image.onerror = () => { image.remove(); el.textContent = initials(user.name); };
+    el.textContent = "";
+    el.append(image);
+  });
   if (user.role === "admin") $$("[data-admin-only]").forEach((el) => (el.hidden = false));
-  try { localStorage.setItem("mnm-me", JSON.stringify({ name: user.name, initials: initials(user.name), avatar: user.avatarUrl || "" })); } catch {}
+  try {
+    localStorage.setItem("mnm-me", JSON.stringify({
+      name: user.name,
+      initials: initials(user.name),
+      avatar: user.avatarUrl || "",
+      avatarSource: "database",
+    }));
+  } catch {}
 
   /* sections (#hash routing) */
   const links = $$(".side-nav a[href^='#']");

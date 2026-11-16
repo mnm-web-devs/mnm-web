@@ -90,6 +90,7 @@
 .who b { font: 600 .9rem var(--head); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .who small { color: var(--muted); font-size: .76rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .avatar { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--grad); color: #fff; font: 700 .82rem var(--head); }
+.avatar > img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
 .avatar.sm { width: 30px; height: 30px; font-size: .7rem; }
 .icon-btn { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: #dfe7f5; cursor: pointer; transition: background .2s; }
 .icon-btn:hover { background: rgba(255,255,255,.1); }

@@ -70,10 +70,14 @@
   const drawStudents = () => {
     const list = visible();
     $("#s-body").innerHTML = list.length ? list.map((s) => `
-      <tr><td><span class="cell-user"><span class="avatar sm">${initials(s.name)}</span><span><b>${esc(s.name)}</b><small>${esc(s.email)}</small></span></span></td>
+      <tr><td><span class="cell-user"><span class="avatar sm student-avatar" data-fallback="${esc(initials(s.name))}">${s.avatarUrl ? `<img src="${esc(s.avatarUrl)}" alt="" referrerpolicy="no-referrer" />` : esc(initials(s.name))}</span><span><b>${esc(s.name)}</b><small>${esc(s.email)}</small></span></span></td>
       <td>${esc(s.country)}</td><td>${tag(s.track)}</td><td>${s.xp.toLocaleString()}</td><td>${fmtDate(s.joined)}</td>
       <td><span class="status ${s.status}">${s.status}</span></td></tr>`).join("")
       : `<tr><td colspan="6" class="empty">No students match these filters.</td></tr>`;
+    $$(".student-avatar img").forEach((image) => image.addEventListener("error", () => {
+      const avatar = image.parentElement;
+      if (avatar) avatar.textContent = avatar.dataset.fallback || "?";
+    }, { once: true }));
     $("#s-count").textContent = `${list.length} of ${students.length} students`;
     $$("[data-sort]").forEach((b) => b.closest("th").setAttribute("aria-sort", b.dataset.sort === sortKey ? (dir > 0 ? "ascending" : "descending") : "none"));
   };
