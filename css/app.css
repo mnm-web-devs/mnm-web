@@ -368,3 +368,63 @@ html { scroll-padding-top: 120px; }
   .top h1, .top h2 { font-size: 1.25rem; }
   .top .btn-sm { padding-inline: 12px; white-space: nowrap; }
 }
+
+/* Applications: UI polish (review list, review modal, student status) */
+.search svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.application-admin-card { grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 6px 16px; padding: 16px 18px; transition: border-color .2s, background .2s; }
+.application-admin-card:hover { border-color: rgba(48,195,156,.35); background: rgba(255,255,255,.04); }
+.application-admin-card .avatar { width: 42px; height: 42px; }
+.application-admin-card .application-status { grid-column: auto; grid-row: auto; margin: 0; }
+.application-admin-card button { justify-self: end; min-width: 112px; }
+.application-admin-info { display: grid; gap: 3px; min-width: 0; }
+.application-admin-info h3 { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.application-role-chip { padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font: 600 .7rem var(--head); letter-spacing: .02em; }
+.application-admin-meta { font-size: .78rem; opacity: .85; }
+
+.modal-card.application-admin-modal { display: flex; flex-direction: column; gap: 16px; height: min(90vh, 900px); overflow: hidden; }
+.application-admin-modal > header { gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.application-admin-head { min-width: 0; }
+.application-admin-head h2 { font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.15; overflow-wrap: anywhere; }
+.application-admin-head p { line-height: 1.5; overflow-wrap: anywhere; }
+.application-admin-modal > header .icon-btn { flex: none; }
+.application-admin-tabs { display: none; }
+.application-admin-columns { flex: 1; min-height: 0; }
+.application-admin-columns > section { overflow-y: auto; min-height: 0; padding-right: 6px; overscroll-behavior: contain; }
+.application-admin-review { padding: 16px !important; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.02); }
+
+.application-voter .application-status { margin: 0; }
+.application-status.pending { background: rgba(255,255,255,.06); color: var(--muted); }
+.application-vote-controls .row-end { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.application-vote-controls .btn { justify-content: center; }
+[data-application-vote="approved"][aria-pressed="true"] { background: var(--mint); border-color: var(--mint); color: #04201a; }
+[data-application-vote="rejected"][aria-pressed="true"] { background: #ff7a8a; border-color: #ff7a8a; color: #2a0409; }
+[data-application-vote][aria-pressed="true"]::before { content: "✓"; margin-right: 6px; }
+.application-note-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.application-note-head time { flex: none; }
+.application-vote-history h4 { margin: 0 0 6px; font: 600 .85rem var(--head); }
+.application-vote-history p { margin: 0 0 4px; }
+
+.application-item summary .application-status { margin-left: 0; }
+.application-item summary::after { margin-left: 12px; }
+.application-date { margin-left: auto; color: var(--muted); font-size: .8rem; }
+.application-item[open] .application-detail { padding-top: 14px; border-top: 1px solid var(--line); margin: 0 16px 16px; padding-inline: 0; }
+.application-item:has(.application-status.approved)[open] { border-color: rgba(48,195,156,.35); }
+.application-item:has(.application-status.rejected)[open] { border-color: rgba(255,122,138,.3); }
+
+@media (max-width: 760px) {
+  .modal-card.application-admin-modal { height: 92vh; padding: 18px; }
+  .application-admin-tabs { display: flex; }
+  .application-admin-tabs .seg-btn { flex: 1; }
+  .application-admin-columns { display: block; }
+  .application-admin-columns > section { height: 100%; padding-right: 0; }
+  .application-admin-columns[data-tab="responses"] > .application-admin-review,
+  .application-admin-columns[data-tab="review"] > .application-admin-responses { display: none; }
+  .application-admin-card { grid-template-columns: auto minmax(0, 1fr); }
+  .application-admin-card .application-status { grid-column: 2; justify-self: start; }
+  .application-admin-card button { grid-column: 1 / -1; justify-self: stretch; }
+}
+@media (max-width: 620px) {
+  .application-date { order: 5; width: 100%; margin-left: 0; }
+  .application-item summary .application-status { margin-left: auto; }
+}

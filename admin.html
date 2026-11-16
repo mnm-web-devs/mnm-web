@@ -148,18 +148,22 @@
   <div class="modal" id="application-modal" hidden role="dialog" aria-modal="true" aria-labelledby="admin-application-title">
     <article class="modal-card application-admin-modal">
       <header>
-        <div>
+        <div class="application-admin-head">
           <h2 id="admin-application-title">Application</h2>
           <p class="muted small" id="admin-application-meta"></p>
         </div>
         <button class="icon-btn" type="button" data-close aria-label="Close">✕</button>
       </header>
-      <div class="application-admin-columns">
-        <section>
+      <div class="seg application-admin-tabs" role="group" aria-label="Application sections">
+        <button class="seg-btn" type="button" aria-pressed="true" data-application-tab="responses">Responses</button>
+        <button class="seg-btn" type="button" aria-pressed="false" data-application-tab="review">Review &amp; vote</button>
+      </div>
+      <div class="application-admin-columns" data-tab="responses">
+        <section class="application-admin-responses">
           <h3>Applicant responses</h3>
           <div class="application-response-groups" id="admin-application-responses"></div>
         </section>
-        <section>
+        <section class="application-admin-review">
           <h3>Admin review</h3>
           <p class="muted small">Votes and private notes are visible to admins only.</p>
           <p class="muted small" id="admin-application-sync-status" role="status" aria-live="polite"></p>
@@ -169,8 +173,8 @@
           <div class="application-vote-controls" id="admin-application-vote-controls" hidden>
             <p class="muted small">You can change your verdict until a final result is sent.</p>
             <div class="row-end">
-              <button class="btn btn-sm btn-ghost" type="button" data-application-vote="rejected">Vote Rejected</button>
-              <button class="btn btn-sm" type="button" data-application-vote="approved">Vote Accepted</button>
+              <button class="btn btn-sm btn-ghost" type="button" data-application-vote="rejected" aria-pressed="false">Vote Rejected</button>
+              <button class="btn btn-sm btn-ghost" type="button" data-application-vote="approved" aria-pressed="false">Vote Accepted</button>
             </div>
           </div>
           <p class="application-notice" id="admin-application-review-message" role="status"></p>
