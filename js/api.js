@@ -584,6 +584,10 @@
               email: result.admin.email,
               role: "admin",
               avatarUrl: result.admin.avatarUrl,
+              bio: result.admin.bio || "",
+              location: result.admin.location || "",
+              titles: Array.isArray(result.admin.titles) ? result.admin.titles : undefined,
+              joinedAt: result.admin.createdAt || result.admin.created_at || undefined,
             };
             setAdminSession({ token: admin.token, user: currentUser });
             return currentUser;
@@ -968,6 +972,28 @@
           method: "POST",
           body: { decision, publicMessage },
         });
+      },
+      /* Admin's own profile. Needs PATCH /admin/me and POST /admin/avatar on the API. */
+      async updateMe(updates) {
+        const result = await request("/admin/me", { method: "PATCH", body: updates });
+        const saved = result.admin || {};
+        if (currentUser?.role === "admin") {
+          Object.assign(currentUser, {
+            name: saved.name ?? updates.name ?? currentUser.name,
+            bio: saved.bio ?? updates.bio ?? currentUser.bio,
+            location: saved.location ?? updates.location ?? currentUser.location,
+          });
+          const session = getAdminSession();
+          if (session?.token) setAdminSession({ token: session.token, user: currentUser });
+        }
+        return currentUser;
+      },
+      async uploadAvatar(file) {
+        const formData = new FormData();
+        formData.append("avatar", file);
+        const uploaded = await request("/admin/avatar", { method: "POST", body: formData });
+        if (currentUser?.role === "admin") currentUser.avatarUrl = uploaded.avatarUrl;
+        return uploaded;
       },
       async stats() {
         const { dashboard } = await request("/admin/dashboard");

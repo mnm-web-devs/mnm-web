@@ -530,7 +530,7 @@
   $$("[data-application-tab]").forEach((button) => button.addEventListener("click", () => setTab(button.dataset.applicationTab)));
 
   const newWorkshop = $("[data-new-ws]");
-  const syncTopAction = (view) => { if (newWorkshop) newWorkshop.hidden = view === "applications"; };
+  const syncTopAction = (view) => { if (newWorkshop) newWorkshop.hidden = view === "applications" || view === "profile"; };
   syncTopAction(location.hash.slice(1));
   document.addEventListener("mnm:view", (event) => {
     syncTopAction(event.detail);
