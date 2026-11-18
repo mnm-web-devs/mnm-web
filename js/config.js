@@ -10,8 +10,9 @@ window.MNM_LINKS = {
   email: "mailto:medineuromatics@gmail.com", // contact email
 };
 
-/* MNM titles shown on member profiles, by username (lowercase). Titles set in Clerk
-   (public metadata "mnm_titles") win over this list. Order = order on the profile. */
+/* MNM titles shown on profiles. Key = student username or admin email (lowercase).
+   Titles set in Clerk (public metadata "mnm_titles") or returned by the API win over this list.
+   Order = order on the profile. */
 window.MNM_TITLES = {
   sh1shkanagi: ["Director", "Design Lead", "Tech Lead", "Staff"],
 };
