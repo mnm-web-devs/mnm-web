@@ -19,11 +19,16 @@
   MNM_UI.start();
   const [stats, students, workshops, subs, inq] = await Promise.all([API.stats(), API.students(), API.workshops(), API.submissions(), API.inquiries()]);
   let openApplications = stats.openApplications;
+  let unseenApplications = openApplications;
+  const seenApplications = () => {
+    try { return new Set(JSON.parse(localStorage.getItem("mnm:admin-seen-applications") || "[]")); }
+    catch (_) { return new Set(); }
+  };
 
   /* ---------- overview ---------- */
   const counts = () => {
     const p = subs.filter((s) => s.status === "pending").length, n = inq.filter((i) => i.status === "new").length;
-    $("#c-app").textContent = openApplications || "";
+    $("#c-app").textContent = unseenApplications || "";
     $("#c-sub").textContent = p || ""; $("#c-inq").textContent = n || "";
     return { p, n };
   };
@@ -40,12 +45,19 @@
   const refreshApplicationCount = async () => {
     try {
       openApplications = await API.openApplicationsCount();
+      unseenApplications = openApplications;
+      try {
+        const { applications } = await API.applications({ page: 1, limit: 100, status: "open" });
+        const seen = seenApplications();
+        unseenApplications = applications.filter((a) => !seen.has(a.applicationId)).length;
+      } catch (_) { /* keep the open count */ }
       drawStats();
     } catch (error) {
       console.error("Could not refresh the open application count:", error);
     }
   };
   window.addEventListener("mnm:applications-changed", refreshApplicationCount);
+  refreshApplicationCount();
   window.setInterval(() => {
     if (!document.hidden) refreshApplicationCount();
   }, 30000);
