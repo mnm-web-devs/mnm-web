@@ -77,7 +77,7 @@
     <div class="wrap footer-top">
       <div>
         <img class="footer-logo" src="assets/logo-dark.webp" alt="MNM — Medicine, Neuroscience, Mathematics" width="130" height="127" />
-        <p>Medicine · Neuroscience · Mathematics.<br />A YIMO-affiliated STEM initiative.</p>
+        <p><b>MediNeuroMatics (MNM)</b><br />Medicine · Neuroscience · Mathematics.<br />A YIMO-affiliated STEM initiative.</p>
       </div>
       <nav class="footer-cols" aria-label="Footer">
         <div><b>Tracks</b>${tracks.map(([h, t]) => `<a href="${h}">${t}</a>`).join("")}</div>
@@ -88,7 +88,7 @@
       </nav>
     </div>
     <div class="footer-word" aria-hidden="true">MNM</div>
-    <p class="wrap small">© ${new Date().getFullYear()} MNM. Made by students.</p>
+    <p class="wrap small">© ${new Date().getFullYear()} MediNeuroMatics (MNM). Made by students.</p>
   </footer>`;
   }
 
