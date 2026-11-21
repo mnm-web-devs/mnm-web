@@ -112,6 +112,8 @@
 .application-switch { justify-self: start; }
 .application-panel { display: grid; gap: 18px; }
 .application-notice { margin: 0; color: var(--muted); line-height: 1.55; }
+.application-tip { margin: 0; padding: 12px 14px; border: 1px solid rgba(48,195,156,.45); border-radius: 12px; background: rgba(48,195,156,.08); color: #dff7ef; line-height: 1.5; }
+.application-subhead { margin: 4px 0 -4px; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .application-list { display: grid; gap: 12px; }
 .application-item { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.025); }
 .application-item summary { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; padding: 16px; cursor: pointer; list-style: none; }

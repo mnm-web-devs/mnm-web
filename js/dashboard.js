@@ -141,7 +141,7 @@ document.getElementById("dashboard-signin").addEventListener("click", async (eve
   const heardAboutOtherField = $("#heard-about-other-field");
   const syncOtherFields = () => {
     const studyOther = staffForm.querySelector('input[name="studyStage"][value="other"]').checked;
-    const teamOther = staffForm.querySelector('input[name="teams"][value="other"]').checked;
+    const teamOther = staffForm.querySelector('input[name="roles"][value="other"]').checked;
     const heardOther = staffForm.querySelector('input[name="heardAbout"][value="other"]').checked;
     studyStageOtherField.hidden = !studyOther;
     studyStageOtherField.querySelector("input").required = studyOther;
@@ -151,33 +151,45 @@ document.getElementById("dashboard-signin").addEventListener("click", async (eve
     heardAboutOtherField.querySelector("input").required = heardOther;
   };
   staffForm.addEventListener("change", () => {
-    const teamInputs = [...staffForm.querySelectorAll('input[name="teams"]')];
-    teamInputs[0].setCustomValidity(teamInputs.some((input) => input.checked) ? "" : "Choose at least one team.");
+    const roleInputs = [...staffForm.querySelectorAll('input[name="roles"]')];
+    roleInputs[0].setCustomValidity(roleInputs.some((input) => input.checked) ? "" : "Choose at least one role.");
     syncOtherFields();
   });
   staffForm.addEventListener("input", () => { $("#staff-application-message").textContent = ""; });
+  const leadQuestions = $("#lead-questions");
+  const applicationKind = () => $("#application-role").value;
+  const kindLabel = (kind) => (kind === "lead" ? "Team Lead" : "Staff");
+  const syncLeadQuestions = () => {
+    const isLead = applicationKind() === "lead";
+    leadQuestions.hidden = !isLead;
+    leadQuestions.querySelectorAll("textarea").forEach((field) => { field.required = isLead; });
+  };
   const checkStaffEligibility = async () => {
     const requestId = ++staffEligibilityRequest;
+    const kind = applicationKind();
     staffForm.hidden = true;
     staffConfirmation.hidden = true;
     staffEligibilityRetry.hidden = true;
     staffNotice.textContent = "Checking your application history…";
     try {
       const applications = await API.applications();
-      if (requestId !== staffEligibilityRequest || $("#application-role").value !== "staff") return;
-      const existing = applications.find((application) => application.type === "staff" && application.status !== "rejected");
+      if (requestId !== staffEligibilityRequest || applicationKind() !== kind) return;
+      const existing = applications.find((application) => application.type === kind && application.status !== "rejected");
       if (existing) {
         const status = applicationStatusLabel[existing.status] || "in progress";
-        staffNotice.textContent = `You already have a Staff application (${existing.applicationId}) with status ${status}. You may apply again if it is rejected.`;
+        staffNotice.textContent = `You already have a ${kindLabel(kind)} application (${existing.applicationId}) with status ${status}. You may apply again if it is rejected.`;
         return;
       }
-      staffNotice.textContent = "Complete the form below to submit your Staff application.";
+      staffNotice.textContent = kind === "lead"
+        ? "Complete the form below to apply for a Team Lead role. You can pick several roles."
+        : "Complete the form below to submit your Staff application. You can pick several roles.";
+      syncLeadQuestions();
       staffForm.hidden = false;
       staffForm.elements.namedItem("fullName").value = user.name;
       staffForm.elements.namedItem("email").value = user.email;
       syncOtherFields();
     } catch (error) {
-      if (requestId !== staffEligibilityRequest || $("#application-role").value !== "staff") return;
+      if (requestId !== staffEligibilityRequest || applicationKind() !== kind) return;
       staffNotice.textContent = error.message || "Could not check your application history. Please try again.";
       staffEligibilityRetry.hidden = false;
     }
@@ -187,7 +199,7 @@ document.getElementById("dashboard-signin").addEventListener("click", async (eve
     staffForm.hidden = true;
     staffConfirmation.hidden = true;
     staffEligibilityRetry.hidden = true;
-    if (role === "staff") {
+    if (role === "staff" || role === "lead") {
       checkStaffEligibility();
       return;
     }
@@ -200,10 +212,13 @@ document.getElementById("dashboard-signin").addEventListener("click", async (eve
   staffForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const message = $("#staff-application-message");
-    const teamInputs = [...staffForm.querySelectorAll('input[name="teams"]')];
-    const teams = teamInputs.filter((input) => input.checked).map((input) => input.value);
-    teamInputs[0].setCustomValidity(teams.length ? "" : "Choose at least one team.");
+    const kind = applicationKind() === "lead" ? "lead" : "staff";
+    const roleInputs = [...staffForm.querySelectorAll('input[name="roles"]')];
+    const pickedRoles = roleInputs.filter((input) => input.checked);
+    roleInputs[0].setCustomValidity(pickedRoles.length ? "" : "Choose at least one role.");
     if (!staffForm.reportValidity()) return;
+    const teams = [...new Set(pickedRoles.map((input) => input.dataset.team))];
+    const preferredRoles = pickedRoles.map((input) => input.nextElementSibling.textContent.trim());
 
     const value = (name) => staffForm.elements.namedItem(name).value.trim();
     const payload = {
@@ -216,6 +231,7 @@ document.getElementById("dashboard-signin").addEventListener("click", async (eve
       schoolName: value("schoolName"),
       teams,
       otherTeam: value("otherTeam"),
+      preferredRoles,
       skillsExperience: value("skillsExperience"),
       portfolioLink: value("portfolioLink"),
       hoursPerWeek: staffForm.querySelector('input[name="hoursPerWeek"]:checked').value,
@@ -225,12 +241,37 @@ document.getElementById("dashboard-signin").addEventListener("click", async (eve
       otherSource: value("otherSource"),
       consent: staffForm.elements.namedItem("consent").checked,
     };
+    if (kind === "lead") {
+      payload.leadershipExperience = value("leadershipExperience");
+      payload.teamFit = value("teamFit");
+    }
+    // Older API versions only know the original Staff fields. If the server rejects the
+    // new fields or the lead type, resend as a Staff application with the extra answers
+    // folded into existing text fields so no information is lost.
+    const legacyPayload = () => {
+      const legacy = { ...payload };
+      delete legacy.preferredRoles;
+      delete legacy.leadershipExperience;
+      delete legacy.teamFit;
+      const rolesLine = `Applying for: ${preferredRoles.join(", ")}${kind === "lead" ? " (Team Lead)" : ""}`;
+      legacy.skillsExperience = `${rolesLine}\n\n${payload.skillsExperience}`.slice(0, 1500);
+      if (kind === "lead") {
+        legacy.motivation = `${payload.motivation}\n\nLeadership experience: ${payload.leadershipExperience}\n\nFirst month as a lead: ${payload.teamFit}`.slice(0, 2000);
+      }
+      return legacy;
+    };
     const submit = staffForm.querySelector('button[type="submit"]');
     submit.disabled = true;
     submit.querySelector("span").textContent = "Submitting…";
     message.textContent = "";
     try {
-      const result = await API.submitApplication("staff", payload);
+      let result;
+      try {
+        result = await API.submitApplication(kind, payload);
+      } catch (error) {
+        if (![400, 404, 422].includes(error.status)) throw error;
+        result = await API.submitApplication("staff", legacyPayload());
+      }
       $("#staff-application-id").textContent = result.applicationId;
       staffForm.hidden = true;
       staffConfirmation.hidden = false;

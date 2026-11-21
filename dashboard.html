@@ -124,7 +124,8 @@
             <span>You want to apply for</span>
             <select id="application-role">
               <option value="">Choose a role</option>
-              <option value="staff">Staff</option>
+              <option value="staff">Staff member</option>
+              <option value="lead">Team Lead</option>
               <option value="moderator">Moderator</option>
             </select>
           </label>
@@ -154,18 +155,27 @@
             </fieldset>
             <fieldset class="application-fieldset">
               <legend>Your role in MNM</legend>
-              <fieldset class="application-fieldset">
-                <legend>Which team(s) would you like to join? Pick one or more.</legend>
+              <p class="application-tip" id="application-multi-tip"><b>Tip:</b> you can apply for <b>several roles at once</b>. Tick every role that fits you, and one application covers all of them.</p>
+              <fieldset class="application-fieldset" id="role-picker">
+                <legend>Which role(s) are you applying for? Pick one or more.</legend>
+                <p class="application-subhead">Open now</p>
                 <div class="application-options">
-                  <label class="check"><input type="checkbox" name="teams" value="programs_curriculum" /><span>Programs &amp; Curriculum</span></label>
-                  <label class="check"><input type="checkbox" name="teams" value="web_tech" /><span>Web &amp; Tech</span></label>
-                  <label class="check"><input type="checkbox" name="teams" value="media_content" /><span>Media &amp; Content</span></label>
-                  <label class="check"><input type="checkbox" name="teams" value="design_brand" /><span>Design &amp; Brand</span></label>
-                  <label class="check"><input type="checkbox" name="teams" value="partnerships" /><span>Partnerships</span></label>
-                  <label class="check"><input type="checkbox" name="teams" value="volunteering" /><span>Volunteering</span></label>
-                  <label class="check"><input type="checkbox" name="teams" value="other" /><span>Other</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="video_lead" data-team="media_content" data-level="lead" /><span>Video Lead</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="seo_lead" data-team="media_content" data-level="lead" /><span>SEO Lead</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="outreach_lead" data-team="partnerships" data-level="lead" /><span>Outreach Lead</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="tech_support" data-team="web_tech" data-level="staff" /><span>Tech Support</span></label>
                 </div>
-                <label class="field" id="team-other-field" hidden><span>Which other team?</span><input name="otherTeam" maxlength="100" /></label>
+                <p class="application-subhead">Team staff</p>
+                <div class="application-options">
+                  <label class="check"><input type="checkbox" name="roles" value="design_staff" data-team="design_brand" data-level="staff" /><span>Design &amp; Brand staff</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="tech_staff" data-team="web_tech" data-level="staff" /><span>Web &amp; Tech staff</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="outreach_staff" data-team="partnerships" data-level="staff" /><span>Outreach &amp; Partnerships staff</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="media_staff" data-team="media_content" data-level="staff" /><span>Media &amp; Content staff</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="curriculum_staff" data-team="programs_curriculum" data-level="staff" /><span>Programs &amp; Curriculum staff</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="volunteer" data-team="volunteering" data-level="staff" /><span>Volunteer</span></label>
+                  <label class="check"><input type="checkbox" name="roles" value="other" data-team="other" data-level="staff" /><span>Other</span></label>
+                </div>
+                <label class="field" id="team-other-field" hidden><span>Which other role?</span><input name="otherTeam" maxlength="100" /></label>
               </fieldset>
               <label class="field"><span>What are you good at, and what have you done before?</span><small class="muted">Skills, projects, clubs, olympiads. No experience? Tell us what you want to learn.</small><textarea name="skillsExperience" rows="4" maxlength="1500" required></textarea></label>
               <label class="field"><span>Link to your work (optional)</span><small class="muted">Portfolio, GitHub, Behance, Instagram, a Google Drive folder...</small><input name="portfolioLink" type="url" placeholder="https://" maxlength="1000" /></label>
@@ -179,6 +189,10 @@
                   <label class="check"><input type="radio" name="hoursPerWeek" value="more_than_10" required /><span>More than 10 hours</span></label>
                 </div>
               </fieldset>
+              <div id="lead-questions" hidden>
+                <label class="field"><span>Have you led a team, club or project before? Tell us about it.</span><small class="muted">What you led, how many people, and one result you are proud of.</small><textarea name="leadershipExperience" rows="4" maxlength="1500"></textarea></label>
+                <label class="field"><span>What would you do in your first month as a lead?</span><small class="muted">Goals, how you would organise your team, how you would check progress.</small><textarea name="teamFit" rows="4" maxlength="1500"></textarea></label>
+              </div>
             </fieldset>
             <fieldset class="application-fieldset">
               <legend>Motivation</legend>
