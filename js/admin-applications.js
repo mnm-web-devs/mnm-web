@@ -110,7 +110,7 @@
       keys: ["motivation", "idea", "heardAbout", "otherSource", "consent"],
     },
   ];
-  const pageSize = 25;
+  const pageSize = 15;
   let page = 1;
   let pageCount = 1;
   let searchTimer;
@@ -263,6 +263,7 @@
     $("#app-page-label").textContent = `Page ${page} of ${pageCount} · ${total} applications`;
     $("#app-page-previous").disabled = page <= 1;
     $("#app-page-next").disabled = page >= pageCount;
+    $(".application-admin-pagination").style.display = pageCount <= 1 ? "none" : "";
     statusMessage.textContent = `${total} application${total === 1 ? "" : "s"} found.`;
   }
 
@@ -396,10 +397,22 @@
     }
   }
 
+  // Applications this admin has already opened — they stop counting in the sidebar badge.
+  function markApplicationSeen(applicationId) {
+    try {
+      const key = "mnm:admin-seen-applications";
+      const seen = new Set(JSON.parse(localStorage.getItem(key) || "[]"));
+      seen.add(applicationId);
+      localStorage.setItem(key, JSON.stringify([...seen].slice(-500)));
+    } catch (_) { /* storage unavailable: badge falls back to the open count */ }
+    window.dispatchEvent(new Event("mnm:applications-changed"));
+  }
+
   async function openApplication(applicationId, applicationStatus) {
     stopDetailPolling();
     selectedApplication = applicationId;
     detail = null;
+    markApplicationSeen(applicationId);
     $("#admin-application-title").textContent = applicationId;
     $("#admin-application-meta").textContent = "Loading application details…";
     $("#admin-application-responses").replaceChildren();
