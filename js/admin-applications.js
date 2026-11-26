@@ -71,7 +71,7 @@
       web_tech: "Web & Tech",
       media_content: "Media & Content",
       design_brand: "Design & Brand",
-      partnerships: "Partnerships",
+      partnerships: "Outreach & Partnerships",
       volunteering: "Volunteering",
       other: "Other",
     },
